@@ -1,8 +1,8 @@
 # coding:utf-8
 from SearchEngine.HaiDaoWan import HaiDaoWan
-from WebPageGrabber import WebPageGrabber
-from bs4 import BeautifulSoup
-from data import soup
+# from WebPageGrabber import WebPageGrabber
+# from bs4 import BeautifulSoup
+# from data import soup
 
 if __name__ == '__main__':
     """

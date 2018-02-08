@@ -67,19 +67,23 @@ class HaiDaoWanResult(MagnetResult):
 
     def get_size(self):
         return 'XX.XX GiB'
-    """
+
     def __str__(self):
         string = '# ' + self.name + '\n'
         string += '# Type: ' + self.type[0] + ', ' + self.type[1]
         string += '   SE: ' + str(self.num_seeder)
         string += '   LE: ' + str(self.num_leecher) + '\n\n'
         string += BLUE + self.link + RESET + '\n\n'
-        string += '# Upload date: ' + self.get_time()
-        string += '   Size: ' + self.get_size()
+        string += '# '
+        for each in self.upload_time:
+            string += each + ' '
+        string += '  '
+        for each in self.size:
+            string += each + ' '
         string += '   Uploader: ' + self.uploader + '\n'
         string += '-' * 70
         return string
-    """
+
 
 class HaiDaoWan(SearchEngine):
     def __init__(self):
@@ -123,8 +127,8 @@ class HaiDaoWan(SearchEngine):
                 result['link'] = result_msg.select('td > a')[0]['href']
                 msg_iter = result_msg.select('td > font')[0].stripped_strings
                 msg = msg_iter.next().split(',')
-                # result['upload_time'] = get_time(msg[0])
-                result['size'] = get_size(msg[1])
+                result['upload_time'] = msg[0].split()
+                result['size'] = msg[1].split()
                 result['uploader'] = msg_iter.next()
                 number = result_msg.select('td[align]')
                 result['num_seeder'] = int(number[0].string)
