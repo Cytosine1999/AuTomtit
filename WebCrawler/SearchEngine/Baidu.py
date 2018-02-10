@@ -35,6 +35,6 @@ class Baidu(SearchEngine):
             return
         while True:
             for result in self.cur_page.find(id='content_left').select('div'):
-                yield BaiduResult({})
+                yield BaiduResult()
                 if not self.mod_current_page(self.cur_num_page + 1):
                     break

@@ -1,5 +1,5 @@
 class SearchResult:
-    def __init__(self, result):
+    def __init__(self, **result):
         self.rate = 0
         self.__dict__.update(result)
 

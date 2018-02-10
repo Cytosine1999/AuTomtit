@@ -4,13 +4,12 @@ from SearchResult.MagnetResult import MagnetResult
 from SearchResult.VideoResult import VideoResult
 
 import urllib2
-import time
 
 RED = '\033[31m'
 BLUE = '\033[4;;34m'
 RESET = '\033[0m'
 
-
+"""
 def get_time(msg):
     time_msg = msg.split()
     upload_time = None
@@ -60,6 +59,7 @@ def get_size(msg):
     if size is None:
         print RED + 'Warning! Size format dose not match:', msg, RESET
     return size
+"""
 
 
 class HaiDaoWanResult(MagnetResult, VideoResult):
@@ -79,6 +79,7 @@ class HaiDaoWanResult(MagnetResult, VideoResult):
 class HaiDaoWan(SearchEngine):
     def __init__(self):
         SearchEngine.__init__(self)
+        self.grabber.timeout = 10
         self.grabber.mod_site(self.__class__.__name__, 10)
 
     def generate_url(self, page=0):
@@ -106,19 +107,19 @@ class HaiDaoWan(SearchEngine):
             return
         while True:
             for result_msg in self.cur_page.find(id='main-content').tbody('tr'):
-                result = {}
                 type_msg = result_msg.select('td > center > a')
-                result['type'] = type_msg[0].string + ', ' + type_msg[1].string
-                result['name'] = result_msg.select('td > div')[0].a.string
-                result['link'] = result_msg.select('td > a')[0]['href']
                 msg_iter = result_msg.select('td > font')[0].stripped_strings
                 msg = msg_iter.next().split(',')
-                result['time'] = msg[0][9:]
-                result['size'] = msg[1][6:]
-                result['uploader'] = msg_iter.next()
                 number = result_msg.select('td[align]')
-                result['num_seeder'] = int(number[0].string)
-                result['num_leecher'] = int(number[1].string)
-                yield HaiDaoWanResult(result)
+                yield HaiDaoWanResult(
+                    type=type_msg[0].string + ', ' + type_msg[1].string,
+                    name=result_msg.select('td > div')[0].a.string,
+                    link=result_msg.select('td > a')[0]['href'],
+                    time=msg[0][9:],
+                    size=msg[1][6:],
+                    uploader=msg_iter.next(),
+                    num_seeder=int(number[0].string),
+                    num_leecher=int(number[1].string)
+                )
             if not self.mod_current_page(self.cur_num_page + 1):
                 break

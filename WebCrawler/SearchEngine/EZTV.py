@@ -38,9 +38,10 @@ class EZTV(SearchEngine):
     def results(self):
         for tr_element in self.cur_page.select('tr.forum_header_border'):
             tds = tr_element.select('td.forum_thread_post')
-            result = {'name': tds[1].select('a')[0].string,
-                      'link': tds[2].select('a')[0]['href'],
-                      'size': tds[3].string,
-                      'time': tds[4].string,
-                      'num_seeder': tds[5].string}
-            yield EZTVResult(result)
+            yield EZTVResult(
+                name=tds[1].select('a')[0].string,
+                link=tds[2].select('a')[0]['href'],
+                size=tds[3].string,
+                time=tds[4].string,
+                num_seeder=tds[5].string
+            )

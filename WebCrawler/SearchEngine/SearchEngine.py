@@ -1,9 +1,13 @@
 # coding:utf-8
-from bs4 import BeautifulSoup
 from WebPageGrabber import WebPageGrabber
 
 
 # version 1.0
+
+
+class SearchError(Exception):
+    pass
+
 
 # a super class of search engines
 # you may need to modify the time limit which has a default value one minute between each grabbing action
@@ -37,12 +41,18 @@ class SearchEngine:
     def generate_url(self, page=0):
         return ''
 
+    def html_parse(self, url):
+        respond = self.grabber.parse_page(url, self.__class__.__name__, self.language, self.num_retries)
+        if respond is None:
+            raise SearchError()
+        else:
+            return respond
+
     # this function carries out grabbing action
     def mod_current_page(self, page=0):
-        respond = self.grabber.grab_page(self.generate_url(page), self.__class__.__name__, self.num_retries)
-        if respond is None:
+        self.cur_page = self.html_parse(self.generate_url(page))
+        if self.cur_page is None:
             return False
-        self.cur_page = BeautifulSoup(respond.read(), self.language)
         if not self.test():
             return False
         self.cur_num_page = page
