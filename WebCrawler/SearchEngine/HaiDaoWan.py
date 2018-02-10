@@ -1,13 +1,14 @@
 # coding:utf-8
 from SearchEngine import SearchEngine
 from SearchResult.MagnetResult import MagnetResult
+from SearchResult.VideoResult import VideoResult
 
 import urllib2
 import time
 
-RED = '\033[31m'  # 红色
-BLUE = '\033[4;;34m'  # 蓝色下划线
-RESET = '\033[0m'  # 终端默认颜色
+RED = '\033[31m'
+BLUE = '\033[4;;34m'
+RESET = '\033[0m'
 
 
 def get_time(msg):
@@ -61,25 +62,15 @@ def get_size(msg):
     return size
 
 
-class HaiDaoWanResult(MagnetResult):
-    def get_time(self):
-        return 'YYYY-MM-DD'
-
-    def get_size(self):
-        return 'XX.XX GiB'
-
+class HaiDaoWanResult(MagnetResult, VideoResult):
     def __str__(self):
         string = '# ' + self.name + '\n'
-        string += '# Type: ' + self.type[0] + ', ' + self.type[1]
+        string += '# Type: ' + self.type
         string += '   SE: ' + str(self.num_seeder)
         string += '   LE: ' + str(self.num_leecher) + '\n\n'
         string += BLUE + self.link + RESET + '\n\n'
-        string += '# '
-        for each in self.upload_time:
-            string += each + ' '
-        string += '  '
-        for each in self.size:
-            string += each + ' '
+        string += '# Upload time ' + self.upload_time
+        string += '  Size ' + self.size
         string += '   Uploader: ' + self.uploader + '\n'
         string += '-' * 70
         return string
@@ -99,15 +90,10 @@ class HaiDaoWan(SearchEngine):
         title = self.cur_page.h2.stripped_strings
         title.next()
         msg = title.next().split()
-        if msg[0] != 'No':
-            self.num_results = int(msg[7])
-            sup = len(self.cur_page.find(id='content').select('> div > a'))
-            if sup == 0:
-                sup = 1
-            self.num_page = sup
-        else:
-            self.num_results = 0
-            self.num_page = 0
+        self.num_results = int(msg[7])
+        self.num_page = len(self.cur_page.find(id='content').select('> div > a'))
+        if self.num_page == 0:
+            self.num_page = 1
 
     def test(self):
         title = self.cur_page.h2.stripped_strings
@@ -122,13 +108,13 @@ class HaiDaoWan(SearchEngine):
             for result_msg in self.cur_page.find(id='main-content').tbody('tr'):
                 result = {}
                 type_msg = result_msg.select('td > center > a')
-                result['type'] = [type_msg[0].string, type_msg[1].string]
+                result['type'] = type_msg[0].string + ', ' + type_msg[1].string
                 result['name'] = result_msg.select('td > div')[0].a.string
                 result['link'] = result_msg.select('td > a')[0]['href']
                 msg_iter = result_msg.select('td > font')[0].stripped_strings
                 msg = msg_iter.next().split(',')
-                result['upload_time'] = msg[0].split()
-                result['size'] = msg[1].split()
+                result['upload_time'] = msg[0][9:]
+                result['size'] = msg[1][6:]
                 result['uploader'] = msg_iter.next()
                 number = result_msg.select('td[align]')
                 result['num_seeder'] = int(number[0].string)

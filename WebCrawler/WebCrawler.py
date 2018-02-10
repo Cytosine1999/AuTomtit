@@ -1,8 +1,13 @@
 # coding:utf-8
 from SearchEngine.HaiDaoWan import HaiDaoWan
+# from SearchResult.SearchResult import SearchResult
 # from WebPageGrabber import WebPageGrabber
 # from bs4 import BeautifulSoup
 # from data import soup
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 if __name__ == '__main__':
     """
@@ -32,4 +37,3 @@ if __name__ == '__main__':
         if ((index + 1) % 10) == 0:
             raw_input()
     print 'No more results!'
-

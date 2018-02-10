@@ -12,7 +12,7 @@ class SearchEngine:
     def __init__(self):
         # this member is for 'WebPageGrabber'
         self.num_retries = 2
-        # this member is decode language for 'BeautifuSoup'
+        # this member is decode language for 'BeautifulSoup'
         self.language = 'html5lib'
         # this member is used for grabbing page
         self.grabber = WebPageGrabber(self.__class__.__name__, True)
