@@ -1,8 +1,8 @@
 # coding:utf-8
+import urllib2
+
 from SearchEngine import SearchEngine
 from SearchResult.SearchResult import SearchResult
-
-import urllib2
 
 
 class BaiduResult(SearchResult):

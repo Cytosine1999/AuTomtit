@@ -69,8 +69,8 @@ class HaiDaoWanResult(MagnetResult, VideoResult):
         string += '   SE: ' + str(self.num_seeder)
         string += '   LE: ' + str(self.num_leecher) + '\n\n'
         string += BLUE + self.link + RESET + '\n\n'
-        string += '# Upload time ' + self.upload_time
-        string += '  Size ' + self.size
+        string += '# Upload time: ' + self.time
+        string += '  Size: ' + self.size
         string += '   Uploader: ' + self.uploader + '\n'
         string += '-' * 70
         return string
@@ -113,7 +113,7 @@ class HaiDaoWan(SearchEngine):
                 result['link'] = result_msg.select('td > a')[0]['href']
                 msg_iter = result_msg.select('td > font')[0].stripped_strings
                 msg = msg_iter.next().split(',')
-                result['upload_time'] = msg[0][9:]
+                result['time'] = msg[0][9:]
                 result['size'] = msg[1][6:]
                 result['uploader'] = msg_iter.next()
                 number = result_msg.select('td[align]')
