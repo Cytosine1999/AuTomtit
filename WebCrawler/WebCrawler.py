@@ -12,9 +12,11 @@ from SearchEngine.ZiMuKu import ZiMuKu
 # from bs4 import BeautifulSoup
 # from data import soup
 
+# set output utf-8
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+# avoid chunked
 httplib.HTTPConnection._http_vsn = 10
 httplib.HTTPConnection._http_vsn_str = 'HTTP/1.0'
 
@@ -50,46 +52,19 @@ if __name__ == '__main__':
             key_word = raw_input()
             print
             se = HaiDaoWan()
-            nr = se.search(key_word)
-            print
-            print '# Have', nr, 'results'
-            print '# Showing results 10 at a time'
-            print '# press enter to show next 10 results'
-            print '# or input \'exit\' to exit'
-            print
-            print '-' * 70
-            for index, result in enumerate(se.results()):
-                print '# Number:', (index + 1)
-                print result
-                if ((index + 1) % 10) == 0:
-                    if raw_input() == 'exit':
-                        break
-            print 'No more results!'
         elif num == '2':
             print 'please input key words:'
             key_word = raw_input()
             print
             se = EZTV()
-            se.search(key_word)
-            print
-            print '# Showing results 10 at a time'
-            print '# press enter to show next 10 results'
-            print '# or input \'exit\' to exit'
-            print
-            print '-' * 70
-            for index, result in enumerate(se.results()):
-                print '# Number:', (index + 1)
-                print result
-                if ((index + 1) % 10) == 0:
-                    if raw_input() == 'exit':
-                        break
-            print 'No more results!'
         elif num == '3':
             print 'please input key words:'
             key_word = raw_input()
             print
             se = ZiMuKu()
-            se.search(key_word)
+        else:
+            break
+        if se.search(key_word):
             print
             print '# Showing results 10 at a time'
             print '# press enter to show next 10 results'
@@ -99,10 +74,7 @@ if __name__ == '__main__':
             for index, result in enumerate(se.results()):
                 print '# Number:', (index + 1)
                 print result
-                print
                 if ((index + 1) % 10) == 0:
                     if raw_input() == 'exit':
                         break
-            print 'No more results!'
-        else:
-            break
+        print 'No more results!'

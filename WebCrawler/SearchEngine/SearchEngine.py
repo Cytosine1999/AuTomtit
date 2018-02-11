@@ -26,16 +26,12 @@ class SearchEngine:
         self.cur_num_page = 0
         # this member stores 'BeautifulSoup' object of current page
         self.cur_page = None
-        self.num_results = 0
-        self.num_page = 0
 
     # reset
     def reset(self):
         self.key_word = ''
         self.cur_num_page = 0
         self.cur_page = None
-        self.num_results = 0
-        self.num_page = 0
 
     # you need to override this function to return the correct url
     def generate_url(self, page=0):
@@ -62,20 +58,12 @@ class SearchEngine:
     def search(self, key_word):
         self.reset()
         self.key_word = key_word
-        if not self.mod_current_page():
-            return self.num_results
-        self.get_num()
-        return self.num_results
+        return self.mod_current_page()
 
     # test whether there is result
     # you need to override it
     def test(self):
         return False
-
-    # get number of results and pages
-    # you need to override it
-    def get_num(self):
-        pass
 
     # return an iterator of results
     # you need to override it

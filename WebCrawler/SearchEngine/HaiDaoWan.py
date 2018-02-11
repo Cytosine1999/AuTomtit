@@ -87,15 +87,6 @@ class HaiDaoWan(SearchEngine):
         tail = '/' + str(page) + '/7//'
         return head + urllib2.quote(self.key_word) + tail
 
-    def get_num(self):
-        title = self.cur_page.h2.stripped_strings
-        title.next()
-        msg = title.next().split()
-        self.num_results = int(msg[7])
-        self.num_page = len(self.cur_page.find(id='content').select('> div > a'))
-        if self.num_page == 0:
-            self.num_page = 1
-
     def test(self):
         title = self.cur_page.h2.stripped_strings
         title.next()
@@ -103,8 +94,6 @@ class HaiDaoWan(SearchEngine):
         return msg[0] != 'No'
 
     def results(self):
-        if self.num_results <= 0:
-            return
         while True:
             for result_msg in self.cur_page.find(id='main-content').tbody('tr'):
                 type_msg = result_msg.select('td > center > a')

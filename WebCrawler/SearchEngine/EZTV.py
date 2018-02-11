@@ -11,7 +11,7 @@ RESET = '\033[0m'
 
 class EZTVResult(MagnetResult, VideoResult):
     def __str__(self):
-        string = '# ' + self.name + '\n'
+        string = '# ' + self.name + '\n\n'
         string += BLUE + self.link + RESET + '\n\n'
         string += '# Upload time: ' + self.time
         string += '  Size: ' + self.size
@@ -29,9 +29,6 @@ class EZTV(SearchEngine):
         head = 'http://eztv.ag/search/'
         return head + urllib2.quote(self.key_word)
 
-    def get_num(self):
-        return
-
     def test(self):
         return True
 
@@ -39,8 +36,8 @@ class EZTV(SearchEngine):
         for tr_element in self.cur_page.select('tr.forum_header_border'):
             tds = tr_element.select('td.forum_thread_post')
             yield EZTVResult(
-                name=tds[1].select('a')[0].string,
-                link=tds[2].select('a')[0]['href'],
+                name=tds[1].a.string,
+                link=tds[2].a['href'],
                 size=tds[3].string,
                 time=tds[4].string,
                 num_seeder=tds[5].string

@@ -24,9 +24,6 @@ class ZiMuKu(SearchEngine):
         tail = '&p='
         return head + urllib2.quote(self.key_word) + tail + str(page + 1)
 
-    def get_num(self):
-        return
-
     def test(self):
         return len(self.cur_page.select('div.box.clearfix > p')) == 0
 
@@ -35,19 +32,19 @@ class ZiMuKu(SearchEngine):
             for each in self.cur_page.select('div.item.prel.clearfix'):
                 item = each.select('div.title')[0]
                 msg_video_name = item.select('p')
-                video_name_1 = msg_video_name[0].select('a > b')[0].string
-                video_name_2 = msg_video_name[1].select('a')[0].string
+                video_name_1 = msg_video_name[0].a.b.string
+                video_name_2 = msg_video_name[1].a.string
                 if video_name_1 is None:
                     video_name_1 = ''
                 if video_name_2 is None:
                     video_name_2 = ''
                 tr_items = item.select('tr')
                 if tr_items[-1]['class'][0] == 'msub':
-                    more_page = self.html_parse('http://www.zimuku.cn' + tr_items[-1].select('a')[0]['href'])
+                    more_page = self.html_parse('http://www.zimuku.cn' + tr_items[-1].a['href'])
                     tr_items = more_page.find(id='subtb').select('tbody > tr')
                 for tr_item in tr_items:
                     title = tr_item.select('td.first')[0]
-                    detail_page = self.html_parse('http://www.zimuku.cn' + title.select('a')[0]['href'])
+                    detail_page = self.html_parse('http://www.zimuku.cn' + title.a['href'])
                     msg_detail = detail_page.select('ul.subinfo.clearfix > li')
                     lang = ''
                     for msg_lang in msg_detail[0].select('img'):
@@ -67,12 +64,12 @@ class ZiMuKu(SearchEngine):
                     download_page = self.html_parse('http:' + msg_detail[-1].select('div.clearfix > a')[0]['href'])
                     ref_link = download_page.select('div.down.clearfix a')[0]['href']
                     yield ZiMuKuResult(
-                        name=title.select('a > b')[0].string,
+                        name=title.a.b.string,
                         video_name=video_name_1 + video_name_2,
                         num_download=num_download,
                         format=file_format,
                         language=lang,
-                        authour=msg_detail[5].select('span')[0].string,
+                        authour=msg_detail[5].span.string,
                         time=time_iter.next()[:16],
                         link='http://www.subku.net' + ref_link
                     )
