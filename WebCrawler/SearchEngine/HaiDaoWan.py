@@ -9,60 +9,16 @@ RED = '\033[31m'
 BLUE = '\033[4;;34m'
 RESET = '\033[0m'
 
-"""
-def get_time(msg):
-    time_msg = msg.split()
-    upload_time = None
-    if len(time_msg) == 4:
-        if time_msg[2] == 'mins':
-            upload_time = time.time() - time_msg[1] * 60
-    elif len(time_msg) == 3:
-        if time_msg[1] == 'today':
-            localtime = time.localtime(time.time())
-            year = localtime.tm_year
-            mon = localtime.tm_mon
-            day = localtime.tm_mday
-            min = int(time_msg[0:2])
-            sec = int(time_msg[2:4])
-            pass
-        elif time_msg[1] == 'Y-day':
-            localtime = time.localtime(time.time())
-            year = localtime.tm_year
-            mon = localtime.tm_mon
-            day = localtime.tm_mday - 1
-            min = int(time_msg[0:2])
-            sec = int(time_msg[2:4])
-            pass
-        elif time_msg[1][2] == '-':
-            if time_msg[2][2] == ':':
-                pass
-            else:
-                year = int(time_msg[2])
-                if year > 1970:
-                    pass
-    if upload_time is None:
-        print RED + 'Warning! Time format dose not match:', msg, RESET
-    return upload_time
-
-
-def get_size(msg):
-    size_msg = msg.split()
-    size_value = float(size_msg[1])
-    size_unit = size_msg[2]
-    size = None
-    if size_unit == 'GiB':
-        size = round(size_value * 1024 * 1024 * 1024)
-    elif size_unit == 'MiB':
-        size = round(size_value * 1024 * 1024)
-    elif size_unit == 'KiB':
-        size = round(size_value * 1024)
-    if size is None:
-        print RED + 'Warning! Size format dose not match:', msg, RESET
-    return size
-"""
-
 
 class HaiDaoWanResult(MagnetResult, VideoResult):
+    def test(self):
+        pass
+
+    def rate(self):  # TODO
+        mr = MagnetResult.rate(self)
+        vr = VideoResult.rate(self)
+        return (mr + vr) / 2
+
     def __str__(self):
         string = '# ' + self.name + '\n'
         string += '# Type: ' + self.type
@@ -101,7 +57,7 @@ class HaiDaoWan(SearchEngine):
                 msg = msg_iter.next().split(',')
                 number = result_msg.select('td[align]')
                 yield HaiDaoWanResult(
-                    type=type_msg[0].string + ', ' + type_msg[1].string,
+                    type=type_msg[0].string + ' ' + type_msg[1].string,
                     name=result_msg.select('td > div')[0].a.string,
                     link=result_msg.select('td > a')[0]['href'],
                     time=msg[0][9:],

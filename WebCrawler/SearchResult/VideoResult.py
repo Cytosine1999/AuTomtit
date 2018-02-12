@@ -1,19 +1,20 @@
-import re
-
 from SearchResult import SearchResult
+from Matcher.DictionaryMatcher import DictionaryMatcher
 
-P_1080 = re.compile('1080')
-P_720 = re.compile('720')
+RESOLUTION = DictionaryMatcher({
+    '4K': 95,
+    '1080P': 90,
+    '1080I': 85,
+    '1080': 82,
+    '720P': 80,
+    '720I': 75,
+    '720': 72
+}, 0)
 
 
 class VideoResult(SearchResult):
-    def test(self):
-        pass
-
     def rate(self):
         resolution = 0
         if self.name is not None:
-            if P_1080.match(self.name):
-                resolution += 80
-            elif P_720.match(self.name):
-                resolution += 70
+            resolution = RESOLUTION.match(self.name)
+        return resolution

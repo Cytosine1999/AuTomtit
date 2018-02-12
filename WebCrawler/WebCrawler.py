@@ -1,15 +1,15 @@
 # coding:utf-8
 import sys
 import httplib
+# import urllib
+# from bs4 import BeautifulSoup
 
 from SearchEngine.HaiDaoWan import HaiDaoWan
 from SearchEngine.EZTV import EZTV
 from SearchEngine.ZiMuKu import ZiMuKu
 
-# import urllib
 # from SearchResult.SearchResult import SearchResult
 # from WebPageGrabber import WebPageGrabber
-# from bs4 import BeautifulSoup
 # from data import soup
 
 # set output utf-8
@@ -29,10 +29,6 @@ if __name__ == '__main__':
     wpg = WebPageGrabber()
     respond = wpg.grab_page('http://www.zimuku.cn/search?q=this%20is%20us')
     soup = BeautifulSoup(respond.read(), 'html5lib')
-    print soup.select('div.pagination.r.clearfix > div > span')[0].string.split()[1]
-    # for each in soup.select('div.tbhd.clearfix'):
-    #     print each
-    #     print
     """
     """
     urllib.urlretrieve('http://www.subku.net/download'

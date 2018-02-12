@@ -2,10 +2,10 @@
 import urllib2
 
 from SearchEngine import SearchEngine
-from SearchResult.SearchResult import SearchResult
+from SearchResult.HTTPResult import HTTPResult
 
 
-class BaiduResult(SearchResult):
+class BaiduResult(HTTPResult):
     pass
 
 
@@ -19,22 +19,18 @@ class Baidu(SearchEngine):
         tail = '&pn='
         return head + urllib2.quote(self.key_word) + tail + str(page * 10)
 
-    def get_num(self):
-        self.num_page = 76  # !!!!
-
     def test(self):
         footer = self.cur_page.find(id='page').select('span.pc')
         if len(footer) > 0:
-            page_num = int(footer[0].string)
+            pass
         else:
             pass
         return False
 
     def results(self):
-        if self.num_results <= 0:
-            return
         while True:
             for result in self.cur_page.find(id='content_left').select('div'):
+                result.select('')
                 yield BaiduResult()
                 if not self.mod_current_page(self.cur_num_page + 1):
                     break
