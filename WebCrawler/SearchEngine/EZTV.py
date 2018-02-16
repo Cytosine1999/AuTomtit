@@ -1,7 +1,7 @@
 # coding:utf-8
 import urllib2
 
-from SearchEngine import SearchEngine
+from SearchEngine import SearchEngine, ExtractError
 from SearchResult.MagnetResult import MagnetResult
 from SearchResult.VideoResult import VideoResult
 
@@ -33,12 +33,15 @@ class EZTV(SearchEngine):
         return True
 
     def results(self):
-        for tr_element in self.cur_page.select('tr.forum_header_border'):
-            tds = tr_element.select('td.forum_thread_post')
-            yield EZTVResult(
-                name=tds[1].a.string,
-                link=tds[2].a['href'],
-                size=tds[3].string,
-                time=tds[4].string,
-                num_seeder=tds[5].string
-            )
+        try:
+            for tr_element in self.cur_page.select('tr.forum_header_border'):
+                tds = tr_element.select('td.forum_thread_post')
+                yield EZTVResult(
+                    name=tds[1].a.string,
+                    link=tds[2].a['href'],
+                    size=tds[3].string,
+                    time=tds[4].string,
+                    num_seeder=tds[5].string
+                )
+        except Exception as e:
+            raise ExtractError

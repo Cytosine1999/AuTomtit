@@ -9,6 +9,14 @@ class SearchError(Exception):
     pass
 
 
+class WebError(SearchError):
+    pass
+
+
+class ExtractError(SearchError):
+    pass
+
+
 # a super class of search engines
 # you may need to modify the time limit which has a default value one minute between each grabbing action
 class SearchEngine:
@@ -40,7 +48,7 @@ class SearchEngine:
     def html_parse(self, url):
         respond = self.grabber.parse_page(url, self.__class__.__name__, self.language, self.num_retries)
         if respond is None:
-            raise SearchError()
+            raise WebError()
         else:
             return respond
 

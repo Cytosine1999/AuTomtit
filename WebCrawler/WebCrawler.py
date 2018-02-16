@@ -27,13 +27,12 @@ if __name__ == '__main__':
     """
     """
     wpg = WebPageGrabber()
-    respond = wpg.grab_page('http://www.zimuku.cn/search?q=this%20is%20us')
-    soup = BeautifulSoup(respond.read(), 'html5lib')
+    respond = wpg.grab_page('http://www.baidu.com/link?url=rVT0BdQQb3IESSyRC2-0hQ6XGM39qEwAwvog7TcojakqgGIS_KApiIxHc-id2Wmf')
+    print respond.read()
+    # soup = BeautifulSoup(respond.read(), 'html5lib')
     """
     """
-    urllib.urlretrieve('http://www.subku.net/download'
-                       '/MTAwMjY2fGNkYjNlNjM1MmFlYWJkZjYwNzI2NzE0NHwxNTE4MjcwNDg5fDQ4N2EzZGQ0fHJlbW90ZQ%3D%3D/svr/dx1'
-                       '', "demo.zip") 
+    urllib.urlretrieve('http://www.subku.net/download', "demo.zip") 
     """
 
     while True:
@@ -67,10 +66,15 @@ if __name__ == '__main__':
             print '# or input \'exit\' to exit'
             print
             print '-' * 70
-            for index, result in enumerate(se.results()):
-                print '# Number:', (index + 1)
-                print result
-                if ((index + 1) % 10) == 0:
-                    if raw_input() == 'exit':
-                        break
+            try:
+                for index, result in enumerate(se.results()):
+                    print '# Number:', (index + 1)
+                    print result
+                    if ((index + 1) % 10) == 0:
+                        if raw_input() == 'exit':
+                            continue
+            except Exception as e:
+                print 'Web page have changed, can\'t parse it'
+                continue
         print 'No more results!'
+

@@ -6,15 +6,15 @@ class DictionaryMatcher:
         self.dictionary = []
         self.default = default
         for key, value in dictionary.iteritems():
-            self.dictionary.append((re.compile(key), value))
+            self.dictionary.append((re.compile(key, re.IGNORECASE), value))
 
     def add(self):
         pass    # TODO
 
     def match(self, string):
-        for pattern, value in self.dictionary:
-            if pattern.match(string):
-                return value
+        for each in self.dictionary:
+            if each[1].match(string):
+                return each[2]
         return self.default
 
     def persist(self):
