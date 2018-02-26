@@ -1,13 +1,14 @@
+#!/usr/bin/python
 # coding:utf-8
 import sys
 import httplib
 # import urllib
 # from bs4 import BeautifulSoup
 
+from SearchEngine.SearchEngine import ExtractError
 from SearchEngine.HaiDaoWan import HaiDaoWan
 from SearchEngine.EZTV import EZTV
 from SearchEngine.ZiMuKu import ZiMuKu
-
 # from SearchResult.SearchResult import SearchResult
 # from WebPageGrabber import WebPageGrabber
 # from data import soup
@@ -72,9 +73,9 @@ if __name__ == '__main__':
                     print result
                     if ((index + 1) % 10) == 0:
                         if raw_input() == 'exit':
-                            continue
-            except Exception as e:
-                print 'Web page have changed, can\'t parse it'
+                            break
+            except ExtractError as e:
+                print 'Web page have changed, we can\'t parse it'
                 continue
         print 'No more results!'
 

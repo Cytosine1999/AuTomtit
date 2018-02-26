@@ -5,7 +5,7 @@ import time
 from bs4 import BeautifulSoup
 
 # beta 0
-# this version is not complete and will probably be modified in near future
+# this version is not completed and will probably be modified in near future
 
 RED = '\033[31m'  # 红色
 BLUE = '\033[4;;34m'  # 蓝色下划线

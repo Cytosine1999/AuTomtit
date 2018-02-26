@@ -8,8 +8,9 @@ RESOLUTION = DictionaryMatcher({
     '1080': 82,
     '720P': 80,
     '720I': 75,
-    '720': 72
-}, 0)
+    '720': 72,
+    'default': 50
+})
 
 
 class VideoResult(SearchResult):

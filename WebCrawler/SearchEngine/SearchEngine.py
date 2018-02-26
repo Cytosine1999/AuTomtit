@@ -57,8 +57,12 @@ class SearchEngine:
         self.cur_page = self.html_parse(self.generate_url(page))
         if self.cur_page is None:
             return False
-        if not self.test():
-            return False
+        if page == 0:
+            if not self.first_test():
+                return False
+        else:
+            if not self.test():
+                return False
         self.cur_num_page = page
         return True
 
@@ -68,6 +72,9 @@ class SearchEngine:
         self.key_word = key_word
         return self.mod_current_page()
 
+    def first_test(self):
+        return self.test()
+
     # test whether there is result
     # you need to override it
     def test(self):
@@ -76,5 +83,15 @@ class SearchEngine:
     # return an iterator of results
     # you need to override it
     def results(self):
+        try:
+            while True:
+                for result in self.results_in_page():
+                    yield result
+                if not self.mod_current_page(self.cur_num_page + 1):
+                    break
+        except Exception as e:
+            raise ExtractError
+
+    def results_in_page(self):
         while False:
             yield None

@@ -2,11 +2,14 @@ import re
 
 
 class DictionaryMatcher:
-    def __init__(self, dictionary, default):
+    def __init__(self, dictionary):
         self.dictionary = []
-        self.default = default
+        self.default = None
         for key, value in dictionary.iteritems():
-            self.dictionary.append((re.compile(key, re.IGNORECASE), value))
+            if key == 'default':
+                self.default = value
+            else:
+                self.dictionary.append((re.compile(key, re.IGNORECASE), value))
 
     def add(self):
         pass    # TODO

@@ -1,5 +1,5 @@
 # coding:utf-8
-from SearchEngine import SearchEngine, ExtractError
+from SearchEngine import SearchEngine
 from SearchResult.MagnetResult import MagnetResult
 from SearchResult.VideoResult import VideoResult
 
@@ -49,25 +49,19 @@ class HaiDaoWan(SearchEngine):
         msg = title.next().split()
         return msg[0] != 'No'
 
-    def results(self):
-        try:
-            while True:
-                for result_msg in self.cur_page.find(id='main-content').tbody('tr'):
-                    type_msg = result_msg.select('td > center > a')
-                    msg_iter = result_msg.select('td > font')[0].stripped_strings
-                    msg = msg_iter.next().split(',')
-                    number = result_msg.select('td[align]')
-                    yield HaiDaoWanResult(
-                        type=type_msg[0].string + ' ' + type_msg[1].string,
-                        name=result_msg.select('td > div')[0].a.string,
-                        link=result_msg.select('td > a')[0]['href'],
-                        time=msg[0][9:],
-                        size=msg[1][6:],
-                        uploader=msg_iter.next(),
-                        num_seeder=int(number[0].string),
-                        num_leecher=int(number[1].string)
-                    )
-                if not self.mod_current_page(self.cur_num_page + 1):
-                    break
-        except Exception as e:
-            raise ExtractError
+    def results_in_page(self):
+        for result_msg in self.cur_page.find(id='main-content').tbody('tr'):
+            type_msg = result_msg.select('td > center > a')
+            msg_iter = result_msg.select('td > font')[0].stripped_strings
+            msg = msg_iter.next().split(',')
+            number = result_msg.select('td[align]')
+            yield HaiDaoWanResult(
+                type=type_msg[0].string + ' ' + type_msg[1].string,
+                name=result_msg.select('td > div')[0].a.string,
+                link=result_msg.select('td > a')[0]['href'],
+                time=msg[0][9:],
+                size=msg[1][6:],
+                uploader=msg_iter.next(),
+                num_seeder=int(number[0].string),
+                num_leecher=int(number[1].string)
+            )
