@@ -11,9 +11,6 @@ RESET = '\033[0m'
 
 
 class HaiDaoWanResult(MagnetResult, VideoResult):
-    def test(self):
-        pass
-
     def rate(self):  # TODO
         mr = MagnetResult.rate(self)
         vr = VideoResult.rate(self)
@@ -28,7 +25,6 @@ class HaiDaoWanResult(MagnetResult, VideoResult):
         string += '# Upload time: ' + self.time
         string += '  Size: ' + self.size
         string += '   Uploader: ' + self.uploader + '\n'
-        string += '-' * 70
         return string
 
 

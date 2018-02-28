@@ -16,7 +16,6 @@ class EZTVResult(MagnetResult, VideoResult):
         string += '# Upload time: ' + self.time
         string += '  Size: ' + self.size
         string += '   SE: ' + str(self.num_seeder) + '\n'
-        string += '-' * 70
         return string
 
 

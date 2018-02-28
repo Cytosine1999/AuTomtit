@@ -1,9 +1,11 @@
 #!/usr/bin/python
 # coding:utf-8
 import sys
+# import time
 import httplib
 # import urllib
 # from bs4 import BeautifulSoup
+# import transmissionrpc
 
 from SearchEngine.SearchEngine import ExtractError
 from SearchEngine.HaiDaoWan import HaiDaoWan
@@ -37,40 +39,35 @@ if __name__ == '__main__':
     """
 
     while True:
-        print 'please choose which search engine you want to use'
-        print 'input 1: HaiDaoWan'
-        print 'input 2: QingSongTV'
-        print 'input 3: ZiMuKu'
-        print 'input anything else to exit'
+        print '# input 1: HaiDaoWan'
+        print '# input 2: QingSongTV'
+        print '# input 3: ZiMuKu'
+        print '# input anything else to exit'
+        print 'please choose which search engine you want to use:',
         num = raw_input()
         if num == '1':
-            print 'please input key words:'
+            print 'please input key words:',
             key_word = raw_input()
-            print
             se = HaiDaoWan()
         elif num == '2':
-            print 'please input key words:'
+            print 'please input key words:',
             key_word = raw_input()
-            print
             se = EZTV()
         elif num == '3':
-            print 'please input key words:'
+            print 'please input key words:',
             key_word = raw_input()
-            print
             se = ZiMuKu()
         else:
             break
         if se.search(key_word):
-            print
             print '# Showing results 10 at a time'
             print '# press enter to show next 10 results'
             print '# or input \'exit\' to exit'
-            print
             print '-' * 70
             try:
                 for index, result in enumerate(se.results()):
                     print '# Number:', (index + 1)
-                    print result
+                    print result, '-' * 70
                     if ((index + 1) % 10) == 0:
                         if raw_input() == 'exit':
                             break
