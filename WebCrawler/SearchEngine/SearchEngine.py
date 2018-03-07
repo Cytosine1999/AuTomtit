@@ -14,7 +14,11 @@ class WebError(SearchError):
 
 
 class ExtractError(SearchError):
-    pass
+    def __init__(self, e):
+        self.e = e
+
+    def __str__(self):
+        return str(self.e)
 
 
 # a super class of search engines
@@ -90,7 +94,7 @@ class SearchEngine:
                 if not self.mod_current_page(self.cur_num_page + 1):
                     break
         except Exception as e:
-            raise ExtractError
+            raise ExtractError(e)
 
     def results_in_page(self):
         while False:

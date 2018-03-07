@@ -23,6 +23,10 @@ sys.setdefaultencoding('utf-8')
 httplib.HTTPConnection._http_vsn = 10
 httplib.HTTPConnection._http_vsn_str = 'HTTP/1.0'
 
+RED = '\033[31m'
+BLUE = '\033[4;;34m'
+RESET = '\033[0m'
+
 if __name__ == '__main__':
     """
     page_num = int(soup.find(id='page').select('span.pc')[0].string)
@@ -44,35 +48,32 @@ if __name__ == '__main__':
         print '# input 3: ZiMuKu'
         print '# input anything else to exit'
         print 'please choose which search engine you want to use:',
+        SE = [HaiDaoWan(), EZTV(), ZiMuKu()]
         num = raw_input()
-        if num == '1':
-            print 'please input key words:',
-            key_word = raw_input()
-            se = HaiDaoWan()
-        elif num == '2':
-            print 'please input key words:',
-            key_word = raw_input()
-            se = EZTV()
-        elif num == '3':
-            print 'please input key words:',
-            key_word = raw_input()
-            se = ZiMuKu()
-        else:
+        try:
+            se = SE[int(num) - 1]
+        except ValueError:
             break
+        except IndexError:
+            break
+        print 'please input key words:',
+        key_word = raw_input()
         if se.search(key_word):
             print '# Showing results 10 at a time'
             print '# press enter to show next 10 results'
             print '# or input \'exit\' to exit'
             print '-' * 70
             try:
-                for index, result in enumerate(se.results()):
-                    print '# Number:', (index + 1)
+                for i, result in enumerate(se.results()):
+                    index = i + 1
+                    print '# Number:', index
                     print result, '-' * 70
-                    if ((index + 1) % 10) == 0:
+                    # result.download('/home/cytosine/Downloads/AuTomtit/' + key_word + ' ' + str(index) + '/')
+                    if (index % 10) == 0:
                         if raw_input() == 'exit':
                             break
-            except ExtractError as e:
-                print 'Web page have changed, we can\'t parse it'
+                else:
+                    print 'No more results!'
+            except ExtractError:
+                print RED + 'Can\'t parse the web page' + RESET
                 continue
-        print 'No more results!'
-

@@ -1,7 +1,7 @@
 import time
 
 
-def get(msg):
+def get_time(msg):
     time_msg = msg.split()
     upload_time = None
     if len(time_msg) == 4:

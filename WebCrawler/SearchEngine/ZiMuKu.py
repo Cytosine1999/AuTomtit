@@ -2,23 +2,23 @@
 import os
 import urllib
 import urllib2
-import zipfile
 
 from SearchEngine import SearchEngine
 from SearchResult.SubtitleResult import SubtitleResult
+from Decompresser import decompress
 
 BLUE = '\033[4;;34m'
 RESET = '\033[0m'
 
 
 class ZiMuKuResult(SubtitleResult):
-    def download(self):
-        urllib.urlretrieve(self.link, self.name)
-        if self.name[-3:] == 'zip':
-            sub_file = zipfile.ZipFile(self.name)
-            sub_file.extractall()
-            sub_file.close()
-            os.remove(self.name)
+    def download(self, file_path):
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
+        file_name = file_path + self.name
+        file_name = file_name.encode('utf-8')
+        urllib.urlretrieve(self.link, file_name)
+        decompress(file_name, ['.srt'])
 
 
 class ZiMuKu(SearchEngine):

@@ -1,4 +1,9 @@
-def get(msg):
+import re
+
+
+def get_size(msg):
+    if msg is None:
+        return 0
     size_msg = msg.split()
     size_value = float(size_msg[1])
     size_unit = size_msg[2]

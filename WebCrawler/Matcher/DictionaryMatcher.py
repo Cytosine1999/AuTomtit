@@ -15,6 +15,8 @@ class DictionaryMatcher:
         pass    # TODO
 
     def match(self, string):
+        if string is None:
+            return self.default
         for each in self.dictionary:
             if each[1].match(string):
                 return each[2]

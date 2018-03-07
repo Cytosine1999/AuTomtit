@@ -24,20 +24,3 @@ class MagnetResult(SearchResult):
             return
         else:
             tc.stop_torrent(self.torrent.id)
-
-    """
-    tc = transmissionrpc.Client('localhost', 9091, 'transmission', 'ubuntu')
-    se = HaiDaoWan()
-    se.search('this is us')
-    result = se.results().next()
-    download = tc.add_torrent(result.link)
-    print 'downloading:'
-    print result
-    has = download.hashString
-    print has
-    print tc.get_torrents()
-    time.sleep(10)
-    tc.stop_torrent(has)
-    tc.remove_torrent(has)
-    print tc.get_torrents()
-    """

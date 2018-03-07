@@ -7,9 +7,9 @@ from bs4 import BeautifulSoup
 # beta 0
 # this version is not completed and will probably be modified in near future
 
-RED = '\033[31m'  # 红色
-BLUE = '\033[4;;34m'  # 蓝色下划线
-RESET = '\033[0m'  # 终端默认颜色
+RED = '\033[31m'
+BLUE = '\033[4;;34m'
+RESET = '\033[0m'
 
 # chrome headers
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
