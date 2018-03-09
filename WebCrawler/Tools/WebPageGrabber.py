@@ -1,4 +1,5 @@
 # coding:utf-8
+import urllib
 import urllib2
 import socket
 import time
@@ -91,3 +92,15 @@ class WebPageGrabber:
             print RED + 'Parsing ' + BLUE + url + RED, e, RESET
             if num_retries > 0:
                 return self.parse_page(url, site, mod, num_retries - 1)
+
+    def download(self, url, file_name, num_retries=2):
+        print 'Downloading ' + BLUE + url + RESET
+        try:
+            urllib.urlretrieve(url, file_name)
+        except socket.timeout as e:
+            print RED + 'Downloading ' + BLUE + url + RED, e, RESET
+            if num_retries > 0:
+                return self.download(url, file_name,  num_retries - 1)
+            else:
+                return None
+

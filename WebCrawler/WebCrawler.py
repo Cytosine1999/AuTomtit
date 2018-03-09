@@ -2,6 +2,7 @@
 # coding:utf-8
 import sys
 # import time
+import socket
 import httplib
 # import urllib
 # from bs4 import BeautifulSoup
@@ -11,6 +12,7 @@ from SearchEngine.SearchEngine import ExtractError
 from SearchEngine.HaiDaoWan import HaiDaoWan
 from SearchEngine.EZTV import EZTV
 from SearchEngine.ZiMuKu import ZiMuKu
+from SearchEngine.IMDB import IMDB
 # from SearchResult.SearchResult import SearchResult
 # from WebPageGrabber import WebPageGrabber
 # from data import soup
@@ -23,39 +25,32 @@ sys.setdefaultencoding('utf-8')
 httplib.HTTPConnection._http_vsn = 10
 httplib.HTTPConnection._http_vsn_str = 'HTTP/1.0'
 
+# set default time to 30 sec
+socket.setdefaulttimeout(30)
+
 RED = '\033[31m'
 BLUE = '\033[4;;34m'
 RESET = '\033[0m'
 
-if __name__ == '__main__':
-    """
-    page_num = int(soup.find(id='page').select('span.pc')[0].string)
-    soup.find(id='content_left').select('div')
-    """
-    """
-    wpg = WebPageGrabber()
-    respond = wpg.grab_page('http://www.baidu.com/link?url=rVT0BdQQb3IESSyRC2-0hQ6XGM39qEwAwvog7TcojakqgGIS_KApiIxHc-id2Wmf')
-    print respond.read()
-    # soup = BeautifulSoup(respond.read(), 'html5lib')
-    """
-    """
-    urllib.urlretrieve('http://www.subku.net/download', "demo.zip") 
-    """
+DOWNLOAD_PATH = '/home/cytosine/Downloads/AuTomtit/'
 
+if __name__ == '__main__':
+    SE = [HaiDaoWan(), EZTV(), ZiMuKu(), IMDB()]
     while True:
         print '# input 1: HaiDaoWan'
         print '# input 2: QingSongTV'
         print '# input 3: ZiMuKu'
+        print '# input 4: IMDB'
         print '# input anything else to exit'
         print 'please choose which search engine you want to use:',
-        SE = [HaiDaoWan(), EZTV(), ZiMuKu()]
         num = raw_input()
         try:
-            se = SE[int(num) - 1]
+           num = int(num)
         except ValueError:
             break
         except IndexError:
             break
+        se = SE[num - 1]
         print 'please input key words:',
         key_word = raw_input()
         if se.search(key_word):
@@ -68,7 +63,7 @@ if __name__ == '__main__':
                     index = i + 1
                     print '# Number:', index
                     print result, '-' * 70
-                    # result.download('/home/cytosine/Downloads/AuTomtit/' + key_word + ' ' + str(index) + '/')
+                    result.download(DOWNLOAD_PATH + key_word + ' ' + str(index) + '/')
                     if (index % 10) == 0:
                         if raw_input() == 'exit':
                             break
@@ -77,3 +72,5 @@ if __name__ == '__main__':
             except ExtractError:
                 print RED + 'Can\'t parse the web page' + RESET
                 continue
+        else:
+            print 'No Results!'

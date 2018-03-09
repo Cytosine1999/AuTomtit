@@ -1,5 +1,5 @@
 # coding:utf-8
-from WebPageGrabber import WebPageGrabber
+from Tools.WebPageGrabber import WebPageGrabber
 
 
 # version 1.0
@@ -22,7 +22,7 @@ class ExtractError(SearchError):
 
 
 # a super class of search engines
-# you may need to modify the time limit which has a default value one minute between each grabbing action
+# you may need to modify the time limit between each grabbing action which has a default value one minute
 class SearchEngine:
     # you may need to modify some of the values
     def __init__(self):
@@ -76,6 +76,8 @@ class SearchEngine:
         self.key_word = key_word
         return self.mod_current_page()
 
+    # first test
+    # you may need to override it
     def first_test(self):
         return self.test()
 
@@ -85,7 +87,6 @@ class SearchEngine:
         return False
 
     # return an iterator of results
-    # you need to override it
     def results(self):
         try:
             while True:
@@ -96,6 +97,8 @@ class SearchEngine:
         except Exception as e:
             raise ExtractError(e)
 
+    # return an iterator of results in one page
+    # you need to override it
     def results_in_page(self):
         while False:
             yield None

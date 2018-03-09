@@ -21,5 +21,4 @@ class VideoResult(SearchResult):
     def rate(self):
         s = self.RESOLUTION.match(self.name)
         s += self.UPLOADER.match(self.uploader)
-        s += get_size(self.size)
-        return s
+        return s + get_size(self.size)
