@@ -1,4 +1,4 @@
-from WebCrawler.SearchResult import SearchResult
+from __init__ import SearchResult
 
 
 class HTTPResult(SearchResult):

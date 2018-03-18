@@ -1,5 +1,5 @@
 # coding:utf-8
-from SearchResult import SearchResult
+from __init__ import SearchResult
 from Matcher.DictionaryMatcher import DictionaryMatcher
 
 

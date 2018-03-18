@@ -2,7 +2,7 @@
 import os
 import urllib2
 
-from SearchEngine import SearchEngine
+from __init__ import SearchEngine
 from SearchResult.SubtitleResult import SubtitleResult
 from Tools.Decompresser import decompress
 from Tools.WebPageGrabber import WebPageGrabber
@@ -19,7 +19,7 @@ class ZiMuKuResult(SubtitleResult):
             os.makedirs(file_path)
         file_name = (file_path + self.name).encode('utf-8')
         self.wpg.download(self.link, file_name)
-        decompress(file_name, lambda utf8_name, extension: extension in ['.srt'])
+        decompress(file_name, lambda name, ext: ext in ['.srt'])
 
 
 class ZiMuKu(SearchEngine):

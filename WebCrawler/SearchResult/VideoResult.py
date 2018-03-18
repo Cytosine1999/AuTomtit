@@ -1,4 +1,4 @@
-from SearchResult import SearchResult
+from __init__ import SearchResult
 from Matcher.DictionaryMatcher import DictionaryMatcher
 from Matcher.SizeMatcher import get_size
 

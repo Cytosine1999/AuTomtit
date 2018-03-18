@@ -5,14 +5,15 @@ import sys
 import socket
 import httplib
 # import urllib
-# from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoupprofile
 # import transmissionrpc
 
-from SearchEngine.SearchEngine import ExtractError
+import AuTomtit
+from SearchEngine import ExtractError
 from SearchEngine.HaiDaoWan import HaiDaoWan
 from SearchEngine.EZTV import EZTV
 from SearchEngine.ZiMuKu import ZiMuKu
-from SearchEngine.IMDB import IMDB
+from SearchEngine.IMDb import IMDb
 # from SearchResult.SearchResult import SearchResult
 # from WebPageGrabber import WebPageGrabber
 # from data import soup
@@ -32,10 +33,10 @@ RED = '\033[31m'
 BLUE = '\033[4;;34m'
 RESET = '\033[0m'
 
-DOWNLOAD_PATH = '/home/cytosine/Downloads/AuTomtit/'
 
-if __name__ == '__main__':
-    SE = [HaiDaoWan(), EZTV(), ZiMuKu(), IMDB()]
+def search():
+    profile = AuTomtit.load()
+    ses = [HaiDaoWan(), EZTV(), ZiMuKu(), IMDb()]
     while True:
         print '# input 1: HaiDaoWan'
         print '# input 2: QingSongTV'
@@ -50,7 +51,7 @@ if __name__ == '__main__':
             break
         except IndexError:
             break
-        se = SE[num - 1]
+        se = ses[num - 1]
         print 'please input key words:',
         key_word = raw_input()
         if se.search(key_word):
@@ -63,7 +64,7 @@ if __name__ == '__main__':
                     index = i + 1
                     print '# Number:', index
                     print result, '-' * 70
-                    result.download(DOWNLOAD_PATH + key_word + ' ' + str(index) + '/')
+                    result.download(profile['download path'] + key_word + ' ' + str(index) + '/')
                     if (index % 10) == 0:
                         if raw_input() == 'exit':
                             break

@@ -1,14 +1,14 @@
 import urllib2
 
-from SearchEngine import SearchEngine
-from SearchResult.SearchResult import SearchResult
+from __init__ import SearchEngine
+from SearchResult import SearchResult
 
 
-class IMDBResult(SearchResult):
+class IMDbResult(SearchResult):
     pass
 
 
-class IMDB(SearchEngine):
+class IMDb(SearchEngine):
     def __init__(self):
         SearchEngine.__init__(self)
         self.grabber.mod_site(self.__class__.__name__, 5)
@@ -33,7 +33,7 @@ class IMDB(SearchEngine):
                 rate = over_view.select('div.ratingValue span')[0].string
             else:
                 rate = 'No enough ratings'
-            yield IMDBResult(
+            yield IMDbResult(
                 name=title,
                 rate=rate
             )

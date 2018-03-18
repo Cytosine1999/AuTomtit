@@ -1,5 +1,5 @@
 # coding:utf-8
-from SearchEngine import SearchEngine
+from __init__ import SearchEngine
 from SearchResult.MagnetResult import MagnetResult
 from SearchResult.VideoResult import VideoResult
 

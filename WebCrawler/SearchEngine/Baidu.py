@@ -1,7 +1,7 @@
 # coding:utf-8
 import urllib2
 
-from SearchEngine import SearchEngine
+from __init__ import SearchEngine
 from SearchResult.HTTPResult import HTTPResult
 
 

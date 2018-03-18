@@ -1,6 +1,6 @@
 import transmissionrpc
 
-from SearchResult import SearchResult
+from __init__ import SearchResult
 
 tc = transmissionrpc.Client('localhost', 9091, 'transmission', 'ubuntu')
 
