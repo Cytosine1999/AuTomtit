@@ -46,7 +46,7 @@ class SearchEngine:
 
     # you need to override this function to return the correct url
     def generate_url(self, page=0):
-        return ''
+        raise NotImplementedError
 
     def html_parse(self, url):
         respond = self.grabber.parse_page(url, self.__class__.__name__, self.language, self.num_retries)
@@ -83,7 +83,7 @@ class SearchEngine:
     # test whether there is result
     # you need to override it
     def test(self):
-        return False
+        raise NotImplementedError
 
     # return an iterator of results
     def results(self):
@@ -99,5 +99,4 @@ class SearchEngine:
     # return an iterator of results in one page
     # you need to override it
     def results_in_page(self):
-        while False:
-            yield None
+        raise NotImplementedError

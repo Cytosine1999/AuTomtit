@@ -1,10 +1,9 @@
 # coding:utf-8
-import os
 import urllib2
 
 from __init__ import SearchEngine
 from SearchResult.SubtitleResult import SubtitleResult
-from Tools.Decompresser import decompress
+
 from Tools.WebPageGrabber import WebPageGrabber
 
 BLUE = '\033[4;;34m'
@@ -13,13 +12,6 @@ RESET = '\033[0m'
 
 class ZiMuKuResult(SubtitleResult):
     wpg = WebPageGrabber()
-
-    def download(self, file_path=''):
-        if not os.path.exists(file_path):
-            os.makedirs(file_path)
-        file_name = (file_path + self.name).encode('utf-8')
-        self.wpg.download(self.link, file_name)
-        decompress(file_name, lambda name, ext: ext in ['.srt'])
 
 
 class ZiMuKu(SearchEngine):

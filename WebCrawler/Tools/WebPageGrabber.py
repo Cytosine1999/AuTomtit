@@ -1,9 +1,17 @@
 # coding:utf-8
+import httplib
 import urllib
 import urllib2
 import socket
 import time
 from bs4 import BeautifulSoup
+
+# avoid chunked
+httplib.HTTPConnection._http_vsn = 10
+httplib.HTTPConnection._http_vsn_str = 'HTTP/1.0'
+
+# set default time to 30 sec
+socket.setdefaulttimeout(30)
 
 # beta 0
 # this version is not completed and will probably be modified in near future

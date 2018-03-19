@@ -1,33 +1,9 @@
-#!/usr/bin/python
-# coding:utf-8
-import sys
-# import time
-import socket
-import httplib
-# import urllib
-# from bs4 import BeautifulSoupprofile
-# import transmissionrpc
-
 import AuTomtit
 from SearchEngine import ExtractError
 from SearchEngine.HaiDaoWan import HaiDaoWan
 from SearchEngine.EZTV import EZTV
 from SearchEngine.ZiMuKu import ZiMuKu
 from SearchEngine.IMDb import IMDb
-# from SearchResult.SearchResult import SearchResult
-# from WebPageGrabber import WebPageGrabber
-# from data import soup
-
-# set output utf-8
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
-# avoid chunked
-httplib.HTTPConnection._http_vsn = 10
-httplib.HTTPConnection._http_vsn_str = 'HTTP/1.0'
-
-# set default time to 30 sec
-socket.setdefaulttimeout(30)
 
 RED = '\033[31m'
 BLUE = '\033[4;;34m'
