@@ -1,4 +1,4 @@
-from Tools.WebPageGrabber import WebPageGrabber
+from WebCrawler.Tools.WebPageGrabber import WebPageGrabber
 
 
 # version 1.0
@@ -87,14 +87,14 @@ class SearchEngine:
 
     # return an iterator of results
     def results(self):
-        try:
-            while True:
-                for result in self.results_in_page():
-                    yield result
-                if not self.mod_current_page(self.cur_num_page + 1):
-                    break
-        except Exception as e:
-            raise ExtractError(e)
+        # try:
+        while True:
+            for result in self.results_in_page():
+                yield result
+            if not self.mod_current_page(self.cur_num_page + 1):
+                break
+        # except Exception as e:
+        #     raise ExtractError(e)
 
     # return an iterator of results in one page
     # you need to override it

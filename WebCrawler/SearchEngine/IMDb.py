@@ -1,7 +1,7 @@
 import urllib2
 
 from __init__ import SearchEngine
-from SearchResult import SearchResult
+from WebCrawler.SearchResult import SearchResult
 
 
 class IMDbResult(SearchResult):

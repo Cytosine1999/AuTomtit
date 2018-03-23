@@ -7,3 +7,6 @@ class HTTPResult(SearchResult):
 
     def rate(self):
         pass
+
+
+HTTPResult.load()

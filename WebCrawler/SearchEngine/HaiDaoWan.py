@@ -1,7 +1,7 @@
 # coding:utf-8
 from __init__ import SearchEngine
-from SearchResult.MagnetResult import MagnetResult
-from SearchResult.VideoResult import VideoResult
+from WebCrawler.SearchResult.MagnetResult import MagnetResult
+from WebCrawler.SearchResult.VideoResult import VideoResult
 
 import urllib2
 
@@ -14,7 +14,7 @@ class HaiDaoWanResult(MagnetResult, VideoResult):
     def rate(self):  # TODO
         mr = MagnetResult.rate(self)
         vr = VideoResult.rate(self)
-        return (mr + vr) / 2
+        return mr + vr
 
     def __str__(self):
         string = '# ' + self.name + '\n'
@@ -26,6 +26,9 @@ class HaiDaoWanResult(MagnetResult, VideoResult):
         string += '  Size: ' + self.size
         string += '   Uploader: ' + self.uploader + '\n'
         return string
+
+
+HaiDaoWanResult.load()
 
 
 class HaiDaoWan(SearchEngine):
@@ -46,7 +49,7 @@ class HaiDaoWan(SearchEngine):
         return msg[0] != 'No'
 
     def results_in_page(self):
-        for result_msg in self.cur_page.find(id='main-content').tbody('tr'):
+        for result_msg in self.cur_page.find(id='searchResult').tbody('tr'):
             type_msg = result_msg.select('td > center > a')
             msg_iter = result_msg.select('td > font')[0].stripped_strings
             msg = msg_iter.next().split(',')

@@ -1,4 +1,5 @@
 import time
+import re
 
 
 def get_time(msg):
@@ -22,3 +23,21 @@ def get_time(msg):
     if upload_time is None:
         pass
     return upload_time
+
+
+def get_size(msg):
+    if msg is None:
+        return 0
+    size_msg = msg.split()
+    size_value = float(size_msg[0])
+    size_unit = size_msg[1]
+    size = None
+    if size_unit == 'GiB':
+        size = round(size_value * 1024 * 1024 * 1024)
+    elif size_unit == 'MiB':
+        size = round(size_value * 1024 * 1024)
+    elif size_unit == 'KiB':
+        size = round(size_value * 1024)
+    if size is None:
+        pass
+    return size

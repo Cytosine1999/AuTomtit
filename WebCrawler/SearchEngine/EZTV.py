@@ -2,8 +2,8 @@
 import urllib2
 
 from __init__ import SearchEngine
-from SearchResult.MagnetResult import MagnetResult
-from SearchResult.VideoResult import VideoResult
+from WebCrawler.SearchResult.MagnetResult import MagnetResult
+from WebCrawler.SearchResult.VideoResult import VideoResult
 
 BLUE = '\033[4;;34m'
 RESET = '\033[0m'

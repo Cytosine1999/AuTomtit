@@ -1,11 +1,22 @@
 import transmissionrpc
 
 from __init__ import SearchResult
+from DictionaryMatcher import ValueMatcher  # , DictionaryMatcher
 
-tc = transmissionrpc.Client('localhost', 9091, 'transmission', 'ubuntu')
+tc = transmissionrpc.Client('localhost', 9091, 'admin', 'admin')
 
 
 class MagnetResult(SearchResult):
+    @classmethod
+    def set(cls):
+        cls.MATCHER.update({
+            'seeder': ValueMatcher(cls.MAGNET_RESULT_SETTINGS['seeder'])
+        })
+
+    def rate(self):
+        seeder = self.MATCHER['seeder'].match(self.num_seeder)
+        return seeder
+
     def download(self):
         if self.torrent is None:
             self.__dict__['torrent'] = tc.add_torrent(self.link) # TODO return type
@@ -24,3 +35,6 @@ class MagnetResult(SearchResult):
             return
         else:
             tc.stop_torrent(self.torrent.id)
+
+
+MagnetResult.load()

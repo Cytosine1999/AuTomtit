@@ -1,21 +1,24 @@
 import os
 
 from __init__ import SearchResult
-from Matcher.DictionaryMatcher import DictionaryMatcher
-from Tools.Decompresser import decompress
+from DictionaryMatcher import DictionaryMatcher
+from WebCrawler.Tools.Decompresser import decompress
+from WebCrawler.Tools.WebPageGrabber import WebPageGrabber
 
 
 class SubtitleResult(SearchResult):
+    wpg = WebPageGrabber()
+
     @classmethod
     def set(cls):
-        cls.MATCHER = {}
-        for key, value in cls.SUBTITLE_RESULT_SETTINGS.iteritems():
-            upper_key = key.upper()
-            cls.MATCHER[upper_key] = DictionaryMatcher(value)
+        cls.MATCHER.update({
+            'author': DictionaryMatcher(cls.SUBTITLE_RESULT_SETTINGS['author']),
+            'language': DictionaryMatcher(cls.SUBTITLE_RESULT_SETTINGS['language'])
+        })
 
     def rate(self):
-        s = self.AUTHOR.match(self.author)
-        return s + self.LANGUAGE.match(self.language)
+        s = SubtitleResult.MATCHER['author'].match(self.author)
+        return s + SubtitleResult.MATCHER['language'].match(self.language)
 
     def download(self, file_path=''):
         if not os.path.exists(file_path):

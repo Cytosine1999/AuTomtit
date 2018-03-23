@@ -1,5 +1,14 @@
 {
     "download path":"/home/cytosine/Downloads/AuTomtit",
+    "eztv result settings":{},
+    "hai dao wan result settings":{},
+    "im db result settings":{},
+    "magnet result settings":{
+        "seeder":{
+            "maximum":50,
+            "ratio":1
+        }
+    },
     "subtitle result settings":{
         "author":{
             "YYeTs":80,
@@ -14,19 +23,20 @@
     },
     "video result settings":{
         "resolution":{
-            "1080":82,
             "1080I":85,
             "1080P":90,
             "4K":95,
-            "720":72,
             "720I":75,
             "720P":80,
-            "default":50
+            "default":0
+        },
+        "size":{
+            "maximum":1000,
+            "ratio":0.00000005
         },
         "uploader":{
-            "default":50
+            "default":0
         }
     },
-    "magnet result settings":{
-    }
+    "zi mu ku result settings":{}
 }

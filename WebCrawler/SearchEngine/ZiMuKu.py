@@ -2,17 +2,14 @@
 import urllib2
 
 from __init__ import SearchEngine
-from SearchResult.SubtitleResult import SubtitleResult
-
-from Tools.WebPageGrabber import WebPageGrabber
+from WebCrawler.SearchResult.SubtitleResult import SubtitleResult
 
 BLUE = '\033[4;;34m'
 RESET = '\033[0m'
 
 
 class ZiMuKuResult(SubtitleResult):
-    wpg = WebPageGrabber()
-
+    pass
 
 class ZiMuKu(SearchEngine):
     def __init__(self):

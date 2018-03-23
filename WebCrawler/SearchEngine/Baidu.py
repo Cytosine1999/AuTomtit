@@ -2,7 +2,7 @@
 import urllib2
 
 from __init__ import SearchEngine
-from SearchResult.HTTPResult import HTTPResult
+from WebCrawler.SearchResult.HTTPResult import HTTPResult
 
 
 class BaiduResult(HTTPResult):
