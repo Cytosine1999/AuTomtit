@@ -1,5 +1,5 @@
 import time
-import re
+# import re
 
 
 def get_time(msg):

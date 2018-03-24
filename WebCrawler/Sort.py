@@ -11,11 +11,11 @@ RESET = '\033[0m'
 
 
 class Sort:
-    def __init__(self):
+    def __init__(self, size):
+        self.size = size
         self.top = []
 
     def push(self, val, obj):
-        flag = False
         if len(self.top) == 0:
             self.top.append((val, obj))
         else:
@@ -24,7 +24,7 @@ class Sort:
                     self.top.insert(index, (val, obj))
                     break
             self.top.append((val, obj))
-            if len(self.top) > 5:
+            if len(self.top) > self.size:
                 self.top = self.top[0:5]
         """
         print '['
@@ -54,7 +54,7 @@ def search():
         se = ses[num - 1]
         print 'please input key words:',
         key_word = raw_input()
-        s = Sort()
+        s = Sort(5)
         if se.search(key_word):
             try:
                 for i, result in enumerate(se.results()):

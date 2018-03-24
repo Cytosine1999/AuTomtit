@@ -85,6 +85,9 @@ class SearchEngine:
     def test(self):
         raise NotImplementedError
 
+    def result(self):
+        pass
+
     # return an iterator of results
     def results(self):
         # try:
@@ -100,3 +103,10 @@ class SearchEngine:
     # you need to override it
     def results_in_page(self):
         raise NotImplementedError
+
+    @staticmethod
+    def unwrap(obj, fn):
+        try:
+            return fn(obj)
+        except Exception:
+            return None

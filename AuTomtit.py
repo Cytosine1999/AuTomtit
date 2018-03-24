@@ -1,6 +1,5 @@
 #!/usr/bin/python
-# from WebCrawler import WebCrawler
-from WebCrawler import Sort
+from WebCrawler import Search, Sort
 import Settings
 
 if __name__ == '__main__':

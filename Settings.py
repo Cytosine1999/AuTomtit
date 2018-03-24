@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import shutil
+import filecmp
 
 # set output utf-8
 reload(sys)
@@ -27,6 +28,8 @@ def load():
             f = file(DIR, 'r')
             SETTINGS = json.load(f)
             f.close()
+            if not filecmp.cmp(DIR, DIR_BACKUP):
+                shutil.copyfile(DIR, DIR_BACKUP)
         except Exception as e:
             print RED + str(e) + RESET
             print GREEN + '[settings] regenerating settings file...' + RESET

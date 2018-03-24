@@ -1,7 +1,10 @@
 {
     "download path":"/home/cytosine/Downloads/AuTomtit",
     "eztv result settings":{},
-    "hai dao wan result settings":{},
+    "hai dao wan result settings":{
+        "magnet":1,
+        "video":1
+    },
     "im db result settings":{},
     "magnet result settings":{
         "seeder":{
@@ -32,10 +35,7 @@
         },
         "size":{
             "maximum":1000,
-            "ratio":0.00000005
-        },
-        "uploader":{
-            "default":0
+            "ratio":5e-08
         }
     },
     "zi mu ku result settings":{}

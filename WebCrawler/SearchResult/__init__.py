@@ -28,7 +28,9 @@ class SearchResult:
         Settings.dump(profile)
 
     def __init__(self, **result):
-        self.__dict__.update(result)
+        for key, value in result.iteritems():
+            if value is not None:
+                self.__dict__[key] = value
 
     def __str__(self):
         string = self.__class__.__name__ + ':\n'

@@ -7,6 +7,7 @@ def decompress(name, select=lambda file_name, extension: True):
     # get file path and extension name
     path_name, f_n = os.path.split(name)
     _, ext = os.path.splitext(f_n)
+
     # create compressed file object
     if ext == '.zip':
         sub_file = zipfile.ZipFile(name)
@@ -34,6 +35,7 @@ def decompress(name, select=lambda file_name, extension: True):
                 fo = open(utf8_name, "w")
                 fo.write(data)
                 fo.close()
+
             # decompress recursively
             decompress(utf8_name, select)
     sub_file.close()

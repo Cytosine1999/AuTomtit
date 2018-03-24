@@ -11,9 +11,13 @@ RESET = '\033[0m'
 
 
 class HaiDaoWanResult(MagnetResult, VideoResult):
-    def rate(self):  # TODO
-        mr = MagnetResult.rate(self)
-        vr = VideoResult.rate(self)
+    @classmethod
+    def set(cls):
+        pass
+
+    def rate(self):
+        mr = self.HAI_DAO_WAN_RESULT_SETTINGS['magnet'] * MagnetResult.rate(self)
+        vr = self.HAI_DAO_WAN_RESULT_SETTINGS['video'] * VideoResult.rate(self)
         return mr + vr
 
     def __str__(self):
@@ -23,7 +27,7 @@ class HaiDaoWanResult(MagnetResult, VideoResult):
         string += '   LE: ' + str(self.num_leecher) + '\n\n'
         string += BLUE + self.link + RESET + '\n\n'
         string += '# Upload time: ' + self.time
-        string += '  Size: ' + self.size
+        string += '   Size: ' + self.size
         string += '   Uploader: ' + self.uploader + '\n'
         return string
 
