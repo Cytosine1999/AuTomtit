@@ -20,10 +20,6 @@ class EZTVResult(MagnetResult, VideoResult):
 
 
 class EZTV(SearchEngine):
-    def __init__(self):
-        SearchEngine.__init__(self)
-        self.grabber.mod_site(self.__class__.__name__, 10)
-
     def generate_url(self, page=0):
         head = 'http://eztv.ag/search/'
         return head + urllib2.quote(self.key_word)
@@ -37,10 +33,13 @@ class EZTV(SearchEngine):
     def results_in_page(self):
         for tr_element in self.cur_page.select('tr.forum_header_border'):
             tds = tr_element.select('td.forum_thread_post')
-            yield EZTVResult(
-                name=tds[1].a.string,
-                link=tds[2].a['href'],
-                size=tds[3].string,
-                time=tds[4].string,
-                num_seeder=tds[5].string
-            )
+            yield EZTVResult({
+                'name': tds[1].a.string,
+                'link': tds[2].a['href'],
+                'size': tds[3].string,
+                'time': tds[4].string,
+                'num_seeder': tds[5].string
+            })
+
+
+EZTV.set(10, 10)

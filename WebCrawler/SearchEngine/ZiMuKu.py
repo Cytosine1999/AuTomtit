@@ -11,12 +11,10 @@ RESET = '\033[0m'
 class ZiMuKuResult(SubtitleResult):
     pass
 
+
 class ZiMuKu(SearchEngine):
-    def __init__(self):
-        SearchEngine.__init__(self)
-        self.grabber.mod_site(self.__class__.__name__, 5)
-        self.grabber.timeout = 10
-        self.num_retries = 5
+    DOMAIN = 'http://www.zimuku.cn'
+    DOMAIN_DOWNLOAD = 'http://www.subku.net'
 
     def generate_url(self, page=0):
         head = 'http://www.zimuku.cn/search?q='
@@ -41,11 +39,11 @@ class ZiMuKu(SearchEngine):
                 video_name_2 = ''
             tr_items = item.select('tr')
             if tr_items[-1]['class'][0] == 'msub':
-                more_page = self.html_parse('http://www.zimuku.cn' + tr_items[-1].a['href'])
+                more_page = self.html_parse(self.DOMAIN + tr_items[-1].a['href'])
                 tr_items = more_page.find(id='subtb').select('tbody > tr')
             for tr_item in tr_items:
                 title = tr_item.select('td.first')[0]
-                detail_page = self.html_parse('http://www.zimuku.cn' + title.a['href'])
+                detail_page = self.html_parse(self.DOMAIN + title.a['href'])
                 msg_detail = detail_page.select('ul.subinfo.clearfix > li')
                 lang = ''
                 for msg_lang in msg_detail[0].select('img'):
@@ -64,13 +62,16 @@ class ZiMuKu(SearchEngine):
                     num_download = 0
                 download_page = self.html_parse('http:' + msg_detail[-1].select('div.clearfix > a')[0]['href'])
                 ref_link = download_page.select('div.down.clearfix a')[0]['href']
-                yield ZiMuKuResult(
-                    name=title.a.b.string,
-                    video_name=video_name_1 + video_name_2,
-                    num_download=num_download,
-                    format=file_format,
-                    language=lang,
-                    author=msg_detail[5].span.string,
-                    time=time_iter.next()[:16],
-                    link='http://www.subku.net' + ref_link
-                )
+                yield ZiMuKuResult({
+                    'name': title.a.b.string,
+                    'video_name': video_name_1 + video_name_2,
+                    'num_download': num_download,
+                    'format': file_format,
+                    'language': lang,
+                    'author': msg_detail[5].span.string,
+                    'time': time_iter.next()[:16],
+                    'link': self.DOMAIN_DOWNLOAD + ref_link
+                })
+
+
+ZiMuKu.set(5, 10, 5)

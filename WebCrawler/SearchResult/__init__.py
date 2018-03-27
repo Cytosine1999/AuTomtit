@@ -27,8 +27,8 @@ class SearchResult:
         profile[cls.profile_name] = cls.__dict__[cls.member_name]
         Settings.dump(profile)
 
-    def __init__(self, **result):
-        for key, value in result.iteritems():
+    def __init__(self, attr):
+        for key, value in attr.iteritems():
             if value is not None:
                 self.__dict__[key] = value
 

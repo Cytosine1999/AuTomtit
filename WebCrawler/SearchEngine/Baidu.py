@@ -10,10 +10,6 @@ class BaiduResult(HTTPResult):
 
 
 class Baidu(SearchEngine):
-    def __init__(self):
-        SearchEngine.__init__(self)
-        self.grabber.mod_site(self.__class__.__name__, 10)
-
     def generate_url(self, page=0):
         head = 'http://baidu/s?wd='
         tail = '&pn='
@@ -32,7 +28,10 @@ class Baidu(SearchEngine):
             title_msg = result.select('h3.t')[0]
             # description_msg = result.select('div.c-abstract')[0]
             # source_msg = result.select('div.f13')[0]
-            yield BaiduResult(
-                name=title_msg.a.string,
-                link=title_msg.a['href']
-            )
+            yield BaiduResult({
+                'name': title_msg.a.string,
+                'link': title_msg.a['href']
+            })
+
+
+Baidu.set(10, 10)

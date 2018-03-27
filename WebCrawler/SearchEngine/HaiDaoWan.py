@@ -36,11 +36,6 @@ HaiDaoWanResult.load()
 
 
 class HaiDaoWan(SearchEngine):
-    def __init__(self):
-        SearchEngine.__init__(self)
-        self.grabber.timeout = 10
-        self.grabber.mod_site(self.__class__.__name__, 10)
-
     def generate_url(self, page=0):
         head = 'http://thepiratebay.cd/search/'
         tail = '/' + str(page) + '/7//'
@@ -58,13 +53,16 @@ class HaiDaoWan(SearchEngine):
             msg_iter = result_msg.select('td > font')[0].stripped_strings
             msg = msg_iter.next().split(',')
             number = result_msg.select('td[align]')
-            yield HaiDaoWanResult(
-                type=type_msg[0].string + ' ' + type_msg[1].string,
-                name=result_msg.select('td > div')[0].a.string,
-                link=result_msg.select('td > a')[0]['href'],
-                time=msg[0][9:],
-                size=msg[1][6:],
-                uploader=msg_iter.next(),
-                num_seeder=int(number[0].string),
-                num_leecher=int(number[1].string)
-            )
+            yield HaiDaoWanResult({
+                'type': type_msg[0].string + ' ' + type_msg[1].string,
+                'name': result_msg.select('td > div')[0].a.string,
+                'link': result_msg.select('td > a')[0]['href'],
+                'time': msg[0][9:],
+                'size': msg[1][6:],
+                'uploader': msg_iter.next(),
+                'num_seeder': int(number[0].string),
+                'num_leecher': int(number[1].string)
+            })
+
+
+HaiDaoWan.set(10, 10)

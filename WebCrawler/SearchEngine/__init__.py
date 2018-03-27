@@ -1,9 +1,6 @@
 from WebCrawler.Tools.WebPageGrabber import WebPageGrabber
 
 
-# version 1.0
-
-
 class SearchError(Exception):
     pass
 
@@ -23,14 +20,17 @@ class ExtractError(SearchError):
 # a super class of search engines
 # you may need to modify the time limit between each grabbing action which has a default value one minute
 class SearchEngine:
+    @classmethod
+    def set(cls, time_limit=60, time_out=60, retries=2):
+        # this member is used for grabbing page
+        cls.grabber = WebPageGrabber(cls.__name__, True)
+        cls.grabber.mod_site('IMDb', time_limit)
+        cls.grabber.timeout = time_out
+        cls.language = 'html5lib'
+        cls.num_retries = retries
+
     # you may need to modify some of the values
     def __init__(self):
-        # this member is for 'WebPageGrabber'
-        self.num_retries = 2
-        # this member is decode language for 'BeautifulSoup'
-        self.language = 'html5lib'
-        # this member is used for grabbing page
-        self.grabber = WebPageGrabber(self.__class__.__name__, True)
         # this member stores the current key word
         self.key_word = ''
         # this member stores current page index
@@ -48,8 +48,9 @@ class SearchEngine:
     def generate_url(self, page=0):
         raise NotImplementedError
 
-    def html_parse(self, url):
-        respond = self.grabber.parse_page(url, self.__class__.__name__, self.language, self.num_retries)
+    @classmethod
+    def html_parse(cls, url):
+        respond = cls.grabber.parse_page(url, cls.__name__, cls.language, cls.num_retries)
         if respond is None:
             raise WebError()
         else:
@@ -105,8 +106,8 @@ class SearchEngine:
         raise NotImplementedError
 
     @staticmethod
-    def unwrap(obj, fn):
+    def unwrap(fn):
         try:
-            return fn(obj)
+            return fn()
         except Exception:
             return None
