@@ -67,7 +67,7 @@ class Text:
             list[num] = no_tags_str
 
         # merge chs or eng in different lines
-        zh = re.compile('[\u4e00-\u9fa5]')
+        zh = re.compile('[\\u4e00-\\u9fa5]')
         self.chs = []
         self.eng = []
         chs_str = ''

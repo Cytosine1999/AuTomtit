@@ -1,4 +1,4 @@
-from __init__ import SearchResult
+from .__init__ import SearchResult
 
 
 class HTTPResult(SearchResult):

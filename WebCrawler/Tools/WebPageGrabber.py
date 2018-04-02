@@ -1,11 +1,11 @@
 # coding:utf-8
-import httplib, urllib, urllib2, socket, time, re, threading
+import http.client, urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse, socket, time, re, threading
 import requests
 from bs4 import BeautifulSoup
 
 # avoid chunked
-httplib.HTTPConnection._http_vsn = 10
-httplib.HTTPConnection._http_vsn_str = 'HTTP/1.0'
+http.client.HTTPConnection._http_vsn = 10
+http.client.HTTPConnection._http_vsn_str = 'HTTP/1.0'
 
 # set default time to 30 sec
 socket.setdefaulttimeout(30)
@@ -65,25 +65,25 @@ class WebPageGrabber:
         wait_time = self.get_site(site)
         time.sleep(wait_time)
         # start grabbing web page
-        print 'Grabbing web page: ' + BLUE + url + RESET
-        request = urllib2.Request(url, headers=HEADERS)
+        print('Grabbing web page: ' + BLUE + url + RESET)
+        request = urllib.request.Request(url, headers=HEADERS)
         try:
-            return urllib2.urlopen(request, timeout=self.timeout)
-        except urllib2.HTTPError as e:
-            print RED + 'Opening ' + BLUE + url + RED + ':', e, RESET
+            return urllib.request.urlopen(request, timeout=self.timeout)
+        except urllib.error.HTTPError as e:
+            print(RED + 'Opening ' + BLUE + url + RED + ':', e, RESET)
             # retry while encountered server-end error
             if num_retries > 0 and (e.code >= 500):
                 return self.grab_page(url, num_retries - 1)
             else:
                 return None
         except socket.error as e:
-            print RED + 'Opening ' + BLUE + url + RED, e, RESET
+            print(RED + 'Opening ' + BLUE + url + RED, e, RESET)
             if num_retries > 0:
                 return self.grab_page(url, num_retries - 1)
             else:
                 return None
-        except urllib2.URLError as e:
-            print RED + 'Can\'t open ' + BLUE + url + RED + ':', e, RESET
+        except urllib.error.URLError as e:
+            print(RED + 'Can\'t open ' + BLUE + url + RED + ':', e, RESET)
             return None
 
     def parse_page(self, url, mod='html5lib', num_retries=2, lock=None):
@@ -91,16 +91,16 @@ class WebPageGrabber:
         try:
             return BeautifulSoup(response, mod)
         except Exception as e:
-            print RED + 'Parsing ' + BLUE + url + RED, e, RESET
+            print(RED + 'Parsing ' + BLUE + url + RED, e, RESET)
             if num_retries > 0:
                 return self.parse_page(url, mod, num_retries - 1)
 
     def download(self, url, file_name, num_retries=2):
-        print 'Downloading ' + BLUE + url + RESET
+        print('Downloading ' + BLUE + url + RESET)
         try:
-            urllib.urlretrieve(url, file_name)
+            urllib.request.urlretrieve(url, file_name)
         except socket.timeout as e:
-            print RED + 'Downloading ' + BLUE + url + RED, e, RESET
+            print(RED + 'Downloading ' + BLUE + url + RED, e, RESET)
             if num_retries > 0:
                 return self.download(url, file_name,  num_retries - 1)
             else:

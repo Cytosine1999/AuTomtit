@@ -3,11 +3,11 @@ import threading
 
 import Settings
 # from Sort import Sort
-from SearchEngine import ExtractError
+from WebCrawler.SearchEngine import ExtractError
 # from SearchEngine.IMDb import IMDb
-from SearchEngine.EZTV import EZTV
-from SearchEngine.ThePirateBay import ThePirateBay
-from SearchEngine.ZiMuKu import ZiMuKu
+from WebCrawler.SearchEngine.EZTV import EZTV
+from WebCrawler.SearchEngine.ThePirateBay import ThePirateBay
+from WebCrawler.SearchEngine.ZiMuKu import ZiMuKu
 
 RED = '\033[31m'
 BLUE = '\033[4;;34m'
@@ -30,11 +30,11 @@ class Search(threading.Thread):
         if self.se.search(self.kw):
             for result in self.se.results():
                 self.LOCK.acquire()
-                print self.color + '$ thread', self.nm, RESET
-                print result.name
+                print(self.color + '$ thread', self.nm, RESET)
+                print(result.name)
                 self.LOCK.release()
         self.LOCK.acquire()
-        print self.color + '$ thread', self.nm, 'terminated' + RESET
+        print(self.color + '$ thread', self.nm, 'terminated' + RESET)
         self.LOCK.release()
 
 

@@ -1,8 +1,8 @@
 import os
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import re
 
-from __init__ import SearchEngine
+from WebCrawler.SearchEngine.__init__ import SearchEngine
 from WebCrawler.SearchResult import SearchResult
 from WebCrawler.Tools.WebPageGrabber import WebPageGrabber
 
@@ -48,7 +48,7 @@ class IMDb(SearchEngine):
     def generate_url(self, page=0):
         head = 'https://www.imdb.com/find?ref_=nv_sr_fn&q='
         tail = '&s=tt'
-        return head + urllib2.quote(self.key_words) + tail
+        return head + urllib.parse.quote(self.key_words) + tail
 
     def first_test(self):
         return True
@@ -71,15 +71,15 @@ class IMDb(SearchEngine):
     def extract_search_item(cls, item):
         info = item.select('td.result_text')[0]
         info_strings = info.stripped_strings
-        name = info_strings.next()
+        name = next(info_strings)
         IMDb_id = cls.IMBD_ID.findall(info.a['href'])[0]
-        description = cls.BRACKET.findall(info_strings.next())
+        description = cls.BRACKET.findall(next(info_strings))
         reference = info.select('small')
         se_ep = cls.unwrap(lambda: cls.SE_EP.findall(cls.un_strings(reference[0]))[0])
         reference_string = cls.unwrap(lambda: reference[1].stripped_strings)
-        cls.unwrap(lambda: reference_string.next())
-        parent_name = cls.unwrap(lambda: reference_string.next())
-        parent_description = cls.unwrap(lambda: cls.BRACKET.findall(reference_string.next()))
+        cls.unwrap(lambda: next(reference_string))
+        parent_name = cls.unwrap(lambda: next(next(reference_string)))
+        parent_description = cls.unwrap(lambda: cls.BRACKET.findall(next(reference_string)))
         return {
             'name': name,
             'id': IMDb_id,
@@ -131,7 +131,7 @@ class IMDb(SearchEngine):
     @classmethod
     def extract_season_item(cls, item):
         image = item.select('div.image')[0].a
-        se_ep = cls.SE_EP.findall(image.stripped_strings.next())[0]
+        se_ep = cls.SE_EP.findall(next(image.stripped_strings))[0]
         info = item.select('div.info')[0]
         return {
             'name': info.strong.string,
@@ -219,4 +219,4 @@ if __name__ == '__main__':
     se.search('better call saul')
     se.details = True
     for result in se.results():
-        print result
+        print(result)

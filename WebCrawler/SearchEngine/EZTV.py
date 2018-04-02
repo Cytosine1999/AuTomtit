@@ -1,7 +1,7 @@
 # coding:utf-8
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
-from __init__ import SearchEngine
+from .__init__ import SearchEngine
 from WebCrawler.SearchResult.MagnetResult import MagnetResult
 from WebCrawler.SearchResult.VideoResult import VideoResult
 
@@ -22,7 +22,7 @@ class EZTVResult(MagnetResult, VideoResult):
 class EZTV(SearchEngine):
     def generate_url(self, page=0):
         head = 'https://eztv.ag/search/'
-        return head + urllib2.quote(self.key_words)
+        return head + urllib.parse.quote(self.key_words)
 
     def first_test(self):
         return True

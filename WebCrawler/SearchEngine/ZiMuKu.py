@@ -1,7 +1,7 @@
 # coding:utf-8
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
-from __init__ import SearchEngine
+from .__init__ import SearchEngine
 from WebCrawler.SearchResult.SubtitleResult import SubtitleResult
 
 BLUE = '\033[4;;34m'
@@ -19,7 +19,7 @@ class ZiMuKu(SearchEngine):
     def generate_url(self, page=0):
         head = 'https://www.zimuku.cn/search?q='
         tail = '&p='
-        return head + urllib2.quote(self.key_words) + tail + str(page + 1)
+        return head + urllib.parse.quote(self.key_words) + tail + str(page + 1)
 
     def first_test(self):
         return len(self.cur_page.select('div.box.clearfix > p')) == 0
@@ -53,11 +53,11 @@ class ZiMuKu(SearchEngine):
                 for span in msg_format:
                     file_format += span.string
                 num_iter = msg_detail[2].stripped_strings
-                num_iter.next()
+                next(num_iter)
                 time_iter = msg_detail[6].stripped_strings
-                time_iter.next()
+                next(time_iter)
                 try:
-                    num_download = int(num_iter.next())
+                    num_download = int(next(num_iter))
                 except ValueError:
                     num_download = 0
                 download_page = self.html_parse('http:' + msg_detail[-1].select('div.clearfix > a')[0]['href'])

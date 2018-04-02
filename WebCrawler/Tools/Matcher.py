@@ -5,7 +5,7 @@ class DictionaryMatcher:
     def __init__(self, dictionary):
         self.dictionary = []
         self.default = None
-        for key, value in dictionary.iteritems():
+        for key, value in dictionary.items():
             if key == 'default':
                 self.default = value
             else:

@@ -12,7 +12,7 @@ class SearchResult:
         name += '_settings'
         cls.settings_name = name.replace('_', ' ')
         cls.member_name = name.upper()
-        cls.__dict__[cls.member_name] = Settings.load()[cls.settings_name]
+        setattr(cls, cls.member_name, Settings.load()[cls.settings_name])
         if 'MATCHER' not in cls.__dict__:
             cls.MATCHER = {}
         cls.set()
@@ -28,13 +28,13 @@ class SearchResult:
         Settings.dump(profile)
 
     def __init__(self, attr):
-        for key, value in attr.iteritems():
+        for key, value in attr.items():
             if value is not None:
                 self.__dict__[key] = value
 
     def __str__(self):
         string = self.__class__.__name__ + ':\n'
-        for key, value in self.__dict__.iteritems():
+        for key, value in self.__dict__.items():
             string += str(key) + ': ' + str(value) + '\n'
         return string
 
@@ -46,7 +46,7 @@ class SearchResult:
 
     def update(self, attr):
         if attr is not None:
-            for key, value in attr.iteritems():
+            for key, value in attr.items():
                 if value is not None:
                     self.__dict__[key] = value
 

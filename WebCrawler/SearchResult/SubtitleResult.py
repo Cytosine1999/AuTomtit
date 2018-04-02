@@ -1,6 +1,6 @@
 import os
 
-from __init__ import SearchResult
+from .__init__ import SearchResult
 from WebCrawler.Tools.Matcher import DictionaryMatcher
 from WebCrawler.Tools.Decompresser import decompress
 from WebCrawler.Tools.WebPageGrabber import WebPageGrabber

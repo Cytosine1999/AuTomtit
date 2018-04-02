@@ -27,7 +27,7 @@ class SearchEngine:
         cls.grabber.timeout = time_out
         cls.language = 'html5lib'
         cls.num_retries = retries
-        for key, value in time_limit.iteritems():
+        for key, value in time_limit.items():
             cls.grabber.mod_site(key, value)
 
     # you may need to modify some of the values
@@ -88,7 +88,7 @@ class SearchEngine:
         raise NotImplementedError
 
     def result(self):
-        return self.results().next()
+        return next(self.results())
 
     # return an iterator of results
     def results(self):

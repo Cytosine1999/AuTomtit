@@ -1,4 +1,4 @@
-from __init__ import SearchResult
+from .__init__ import SearchResult
 from WebCrawler.Tools.Matcher import DictionaryMatcher, ValueMatcher
 from WebCrawler.Tools.StringResolve import get_size
 

@@ -1,6 +1,6 @@
 class Subtitle:
     def __init__(self, other_sub):
-        self = other_sub
+        pass
 
 
 class SubItem:
@@ -10,8 +10,7 @@ class SubItem:
 
 class TimeAxis:
     def __init__(self):
-        self.start
-        self.end
+        pass
 
 
 class TimeStamp:

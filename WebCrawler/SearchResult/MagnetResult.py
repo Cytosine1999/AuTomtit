@@ -1,6 +1,6 @@
 import transmissionrpc
 
-from __init__ import SearchResult
+from .__init__ import SearchResult
 from WebCrawler.Tools.Matcher import ValueMatcher
 
 tc = transmissionrpc.Client('localhost', 9091, 'admin', 'admin')

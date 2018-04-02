@@ -1,7 +1,7 @@
 # coding:utf-8
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
-from __init__ import SearchEngine
+from .__init__ import SearchEngine
 from WebCrawler.SearchResult.HTTPResult import HTTPResult
 
 
@@ -13,7 +13,7 @@ class Baidu(SearchEngine):
     def generate_url(self, page=0):
         head = 'https://baidu/s?wd='
         tail = '&pn='
-        return head + urllib2.quote(self.key_words) + tail + str(page * 10)
+        return head + urllib.parse.quote(self.key_words) + tail + str(page * 10)
 
     def test(self):
         footer = self.cur_page.find(id='page').select('span.pc')
