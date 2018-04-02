@@ -44,5 +44,11 @@ class SearchResult:
         except KeyError:
             return None
 
+    def update(self, attr):
+        if attr is not None:
+            for key, value in attr.iteritems():
+                if value is not None:
+                    self.__dict__[key] = value
+
     def rate(self):
         return 0

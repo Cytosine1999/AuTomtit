@@ -1,7 +1,6 @@
 #!/usr/bin/python
-from WebCrawler import Search, Sort
+from WebCrawler import Search, Sort, DownloadManager
 import Settings
 
 if __name__ == '__main__':
-    Sort.search()
-    Settings.flush()
+    DownloadManager.run()

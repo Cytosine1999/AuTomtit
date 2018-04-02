@@ -10,14 +10,14 @@ BLUE = '\033[4;;34m'
 RESET = '\033[0m'
 
 
-class HaiDaoWanResult(MagnetResult, VideoResult):
+class ThePirateBayResult(MagnetResult, VideoResult):
     @classmethod
     def set(cls):
         pass
 
     def rate(self):
-        mr = self.HAI_DAO_WAN_RESULT_SETTINGS['magnet'] * MagnetResult.rate(self)
-        vr = self.HAI_DAO_WAN_RESULT_SETTINGS['video'] * VideoResult.rate(self)
+        mr = self.PIRATE_BAY_RESULT_SETTINGS['magnet'] * MagnetResult.rate(self)
+        vr = self.PIRATE_BAY_RESULT_SETTINGS['video'] * VideoResult.rate(self)
         return mr + vr
 
     def __str__(self):
@@ -32,14 +32,14 @@ class HaiDaoWanResult(MagnetResult, VideoResult):
         return string
 
 
-HaiDaoWanResult.load()
+ThePirateBayResult.load()
 
 
-class HaiDaoWan(SearchEngine):
+class ThePirateBay(SearchEngine):
     def generate_url(self, page=0):
-        head = 'http://thepiratebay.cd/search/'
+        head = 'https://thepiratebay.cd/search/'
         tail = '/' + str(page) + '/7//'
-        return head + urllib2.quote(self.key_word) + tail
+        return head + urllib2.quote(self.key_words) + tail
 
     def test(self):
         title = self.cur_page.h2.stripped_strings
@@ -53,7 +53,7 @@ class HaiDaoWan(SearchEngine):
             msg_iter = result_msg.select('td > font')[0].stripped_strings
             msg = msg_iter.next().split(',')
             number = result_msg.select('td[align]')
-            yield HaiDaoWanResult({
+            yield ThePirateBayResult({
                 'type': type_msg[0].string + ' ' + type_msg[1].string,
                 'name': result_msg.select('td > div')[0].a.string,
                 'link': result_msg.select('td > a')[0]['href'],
@@ -65,4 +65,4 @@ class HaiDaoWan(SearchEngine):
             })
 
 
-HaiDaoWan.set(10, 10)
+ThePirateBay.set({'thepiratebay.cd': 5}, 10)

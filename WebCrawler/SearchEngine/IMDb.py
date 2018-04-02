@@ -1,11 +1,15 @@
+import os
 import urllib2
 import re
 
 from __init__ import SearchEngine
 from WebCrawler.SearchResult import SearchResult
+from WebCrawler.Tools.WebPageGrabber import WebPageGrabber
 
 
 class IMDbResult(SearchResult):
+    WPG = WebPageGrabber.get()
+
     def get_type(self):
         pass
 
@@ -21,23 +25,30 @@ class IMDbResult(SearchResult):
         return IMDb.get_id(self.id, season=season)
 
     def get_parent(self):
-        pass
+        return IMDb.get_id(self.parent_id)
+
+    def download_poster(self, path):
+        link = self.poster_link
+        if link is not None:
+            if not os.path.exists(path):
+                os.makedirs(path)
+            self.wpg.download(link, path + '/' + self.name + '.jpg')
 
 
 class IMDb(SearchEngine):
-    DOMAIN = 'http://www.imdb.com'
-    PAREN = re.compile('\((.*?)\)', re.DOTALL)
+    DOMAIN = 'https://www.imdb.com'
+    BRACKET = re.compile('\((.*?)\)', re.DOTALL)
     IMBD_ID = re.compile('nm\d+|tt\d+')
-    SE_EP = re.compile('[Ss]\w*?(\d+),\s*[Ee]\w*?(\d+)')
+    SE_EP = re.compile('[Ss].*?[0]*(\d+).*?[Ee].*?[0]*(\d+)', re.DOTALL)
 
     def __init__(self):
         SearchEngine.__init__(self)
         self.details = False
 
     def generate_url(self, page=0):
-        head = 'http://www.imdb.com/find?ref_=nv_sr_fn&q='
+        head = 'https://www.imdb.com/find?ref_=nv_sr_fn&q='
         tail = '&s=tt'
-        return head + urllib2.quote(self.key_word) + tail
+        return head + urllib2.quote(self.key_words) + tail
 
     def first_test(self):
         return True
@@ -46,11 +57,11 @@ class IMDb(SearchEngine):
         return False
 
     def results_in_page(self):
-        for item in self.extract_search_page(self.cur_page):
-            result = self.extract_search_item(item)
+        for each in self.extract_search_page(self.cur_page):
+            item = IMDbResult(self.extract_search_item(each))
             if self.details:
-                result.update(self.get_id(result['id']))
-            yield IMDbResult(result)
+                item.update(self.get_id(item.id, informed=True))
+            yield item
 
     @classmethod
     def extract_search_page(cls, page):
@@ -62,13 +73,13 @@ class IMDb(SearchEngine):
         info_strings = info.stripped_strings
         name = info_strings.next()
         IMDb_id = cls.IMBD_ID.findall(info.a['href'])[0]
-        description = cls.PAREN.findall(info_strings.next())
+        description = cls.BRACKET.findall(info_strings.next())
         reference = info.select('small')
-        episode_info = cls.unwrap(lambda: cls.un_strings(reference[0]).split())
+        se_ep = cls.unwrap(lambda: cls.SE_EP.findall(cls.un_strings(reference[0]))[0])
         reference_string = cls.unwrap(lambda: reference[1].stripped_strings)
         cls.unwrap(lambda: reference_string.next())
         parent_name = cls.unwrap(lambda: reference_string.next())
-        parent_description = cls.unwrap(lambda: cls.PAREN.findall(reference_string.next()))
+        parent_description = cls.unwrap(lambda: cls.BRACKET.findall(reference_string.next()))
         return {
             'name': name,
             'id': IMDb_id,
@@ -76,8 +87,8 @@ class IMDb(SearchEngine):
             'time': cls.unwrap(lambda: description[0] if len(description[0]) == 4 else None),
             'type': cls.unwrap(lambda: description[1]),
             'aka': cls.unwrap(lambda: info.select('i')[0].string),
-            'season': cls.unwrap(lambda: int(episode_info[2])),
-            'episode': cls.unwrap(lambda a: int(episode_info[5])),
+            'season': cls.unwrap(lambda: int(se_ep[0])),
+            'episode': cls.unwrap(lambda: int(se_ep[1])),
             'parent_name': parent_name,
             'parent_id': cls.unwrap(lambda: reference[1].a['href'].split('/')[2]),
             'parent_time': cls.unwrap(lambda: parent_description[0] if len(parent_description[0]) == 4 else None),
@@ -89,20 +100,29 @@ class IMDb(SearchEngine):
         head = IMDb_id[:2]
         if head == 'tt':
             if 'season' in kwargs:
-                url = 'http://www.imdb.com/title/' + IMDb_id + '/episodes?season=' + str(kwargs['season'])
+                url = 'https://www.imdb.com/title/' + IMDb_id + '/episodes?season=' + str(kwargs['season'])
                 season_list = cls.extract_season_page(cls.html_parse(url))
                 if 'episode' in kwargs:
-                    return cls.extract_season_item(season_list[kwargs['episode']])
+                    return cls.unwrap(lambda: cls.extract_season_item(season_list[kwargs['episode']]))
                 else:
+                    @cls.unwrap
                     def season_iter():
                         for item in season_list:
-                            yield cls.extract_season_item(item)
-                    return season_iter()
+                            episode_item = cls.extract_season_item(item)
+                            if episode_item['season'] == kwargs['season']:
+                                yield episode_item
+                            else:
+                                break
+                    return season_iter
             else:
-                url = 'http://www.imdb.com/title/' + IMDb_id + '/'
-                return cls.extract_title_page(cls.html_parse(url))
+                url = 'https://www.imdb.com/title/' + IMDb_id + '/'
+                if 'informed' in kwargs:
+                    informed = kwargs['informed']
+                else:
+                    informed = False
+                return cls.extract_title_page(cls.html_parse(url), informed)
         elif head == 'nm':
-            return 'http://www.imdb.com/name/' + IMDb_id + '/'
+            return 'https://www.imdb.com/name/' + IMDb_id + '/'
 
     @classmethod
     def extract_season_page(cls, page):
@@ -114,6 +134,7 @@ class IMDb(SearchEngine):
         se_ep = cls.SE_EP.findall(image.stripped_strings.next())[0]
         info = item.select('div.info')[0]
         return {
+            'name': info.strong.string,
             'id': cls.IMBD_ID.findall(image['href'])[0],
             'season': int(se_ep[0]),
             'episode': int(se_ep[1]),
@@ -123,29 +144,29 @@ class IMDb(SearchEngine):
         }
 
     @classmethod
-    def extract_title_page(cls, page):
+    def extract_title_page(cls, page, informed=False):
         over_view = page.find(id='title-overview-widget')
         title_bar = over_view.select('div.title_bar,.titleBar')[0]
         ratings_wrapper = cls.unwrap(lambda: over_view.select('div.ratings_wrapper')[0])
         sub_text = cls.unwrap(lambda: title_bar.select('div.subtext')[0])
         plot_summary = cls.unwrap(lambda: over_view.select('div.plot_summary_wrapper')[0])
-        episode_list = cls.unwrap(lambda: page.find(id='title-episode-widget'))
+        episode_list = cls.unwrap(lambda: page.find(id='title-episode-widget').select('div.seasons-and-year-nav')[0])
+        results = {}
 
-        @IMDb.unwrap
+        @cls.unwrap
         def credit_summaries():
-            results = {}
-            for item in cls.unwrap(lambda: plot_summary.select('div.credit_summary_item')):
-                credits = item.select('> span')
+            for each in cls.unwrap(lambda: plot_summary.select('div.credit_summary_item')):
+                credits = each.select('> span')
                 value = {}
                 for credit in credits:
                     try:
                         value[credit.select('span')[0].string] = cls.IMBD_ID.findall(credit.a['href'])[0]
-                    except Exception:
+                    except TypeError:
                         pass
-                results[item.h4.string.replace(':', '')] = value
+                results[each.h4.string.replace(':', '')] = value
             return results
 
-        return {
+        item = {
             'rate': cls.unwrap(lambda: ratings_wrapper.select('strong > span')[0].string),
             'duration': cls.unwrap(lambda: sub_text.time.string.strip()),
             'category': cls.unwrap(lambda: cls.un_list(sub_text.select('span.itemprop'))),
@@ -154,10 +175,26 @@ class IMDb(SearchEngine):
             'credit_summaries': credit_summaries,
             'season_num': cls.unwrap(lambda: int(episode_list.a.string))
         }
+        if not informed:  # TODO
+            title_parent = cls.unwrap(lambda: over_view.select('div.titleParent')[0])
+            item.update({
+                'name': cls.un_strings(title_bar.select('h1')[0]),
+                'id': None,
+                'time': None,
+                'type': None,
+                'aka': None,
+                'season': None,
+                'episode': None,
+                'parent_name': cls.unwrap(lambda: title_parent.a.string),
+                'parent_id': None,
+                'parent_time': cls.unwrap(lambda: title_parent.span.string),
+                'parent_type': None
+            })
+        return item
 
     @classmethod
     def extract_name_page(cls, page):
-        pass
+        pass  # TODO
 
     @staticmethod
     def un_strings(strings):
@@ -174,4 +211,12 @@ class IMDb(SearchEngine):
         return string
 
 
-IMDb.set(5, 10)
+IMDb.set({'www.imdb.com': 5}, 10)
+
+
+if __name__ == '__main__':
+    se = IMDb()
+    se.search('better call saul')
+    se.details = True
+    for result in se.results():
+        print result

@@ -1,6 +1,6 @@
 from __init__ import SearchResult
-from Tools.Matcher import DictionaryMatcher, ValueMatcher
-from Tools.StringResolve import get_size
+from WebCrawler.Tools.Matcher import DictionaryMatcher, ValueMatcher
+from WebCrawler.Tools.StringResolve import get_size
 
 
 class VideoResult(SearchResult):

@@ -11,9 +11,9 @@ class BaiduResult(HTTPResult):
 
 class Baidu(SearchEngine):
     def generate_url(self, page=0):
-        head = 'http://baidu/s?wd='
+        head = 'https://baidu/s?wd='
         tail = '&pn='
-        return head + urllib2.quote(self.key_word) + tail + str(page * 10)
+        return head + urllib2.quote(self.key_words) + tail + str(page * 10)
 
     def test(self):
         footer = self.cur_page.find(id='page').select('span.pc')
@@ -34,4 +34,4 @@ class Baidu(SearchEngine):
             })
 
 
-Baidu.set(10, 10)
+Baidu.set({'www.baiidu.com': 5}, 10)

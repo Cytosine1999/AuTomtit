@@ -13,13 +13,13 @@ class ZiMuKuResult(SubtitleResult):
 
 
 class ZiMuKu(SearchEngine):
-    DOMAIN = 'http://www.zimuku.cn'
-    DOMAIN_DOWNLOAD = 'http://www.subku.net'
+    DOMAIN = 'https://www.zimuku.cn'
+    DOMAIN_DOWNLOAD = 'https://www.subku.net'
 
     def generate_url(self, page=0):
-        head = 'http://www.zimuku.cn/search?q='
+        head = 'https://www.zimuku.cn/search?q='
         tail = '&p='
-        return head + urllib2.quote(self.key_word) + tail + str(page + 1)
+        return head + urllib2.quote(self.key_words) + tail + str(page + 1)
 
     def first_test(self):
         return len(self.cur_page.select('div.box.clearfix > p')) == 0
@@ -74,4 +74,4 @@ class ZiMuKu(SearchEngine):
                 })
 
 
-ZiMuKu.set(5, 10, 5)
+ZiMuKu.set({'www.zimuku.cn': 5, 'www.subku.net': 5}, 10, 5)

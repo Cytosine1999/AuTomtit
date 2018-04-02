@@ -21,8 +21,8 @@ class EZTVResult(MagnetResult, VideoResult):
 
 class EZTV(SearchEngine):
     def generate_url(self, page=0):
-        head = 'http://eztv.ag/search/'
-        return head + urllib2.quote(self.key_word)
+        head = 'https://eztv.ag/search/'
+        return head + urllib2.quote(self.key_words)
 
     def first_test(self):
         return True
@@ -42,4 +42,4 @@ class EZTV(SearchEngine):
             })
 
 
-EZTV.set(10, 10)
+EZTV.set({'eztv.ag': 5}, 10)

@@ -1,6 +1,6 @@
 # import Settings
 from SearchEngine import ExtractError
-from SearchEngine.HaiDaoWan import HaiDaoWan
+from SearchEngine.ThePirateBay import ThePirateBay
 from SearchEngine.EZTV import EZTV
 from SearchEngine.ZiMuKu import ZiMuKu
 from SearchEngine.IMDb import IMDb
@@ -14,6 +14,9 @@ class Sort:
     def __init__(self, size):
         self.size = size
         self.top = []
+
+    def get_top(self):
+        return self.top[0][1]
 
     def push(self, val, obj):
         if len(self.top) == 0:
@@ -36,7 +39,7 @@ class Sort:
 
 def search():
     # settings = Settings.load()
-    ses = [HaiDaoWan(), EZTV(), ZiMuKu(), IMDb()]
+    ses = [ThePirateBay(), EZTV(), ZiMuKu(), IMDb()]
     while True:
         print '# input 1: HaiDaoWan'
         print '# input 2: QingSongTV'

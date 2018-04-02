@@ -1,6 +1,6 @@
 # import Settings
 from SearchEngine import ExtractError
-from SearchEngine.HaiDaoWan import HaiDaoWan
+from SearchEngine.ThePirateBay import ThePirateBay
 from SearchEngine.EZTV import EZTV
 from SearchEngine.ZiMuKu import ZiMuKu
 from SearchEngine.IMDb import IMDb
@@ -12,7 +12,7 @@ RESET = '\033[0m'
 
 def search():
     # settings = Settings.load()
-    ses = [HaiDaoWan(), EZTV(), ZiMuKu(), IMDb()]
+    ses = [ThePirateBay(), EZTV(), ZiMuKu(), IMDb()]
     while True:
         print '# input 1: HaiDaoWan'
         print '# input 2: QingSongTV'

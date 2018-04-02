@@ -1,13 +1,13 @@
 import os
 
 from __init__ import SearchResult
-from Matcher import DictionaryMatcher
+from WebCrawler.Tools.Matcher import DictionaryMatcher
 from WebCrawler.Tools.Decompresser import decompress
 from WebCrawler.Tools.WebPageGrabber import WebPageGrabber
 
 
 class SubtitleResult(SearchResult):
-    wpg = WebPageGrabber()
+    wpg = WebPageGrabber.get()
 
     @classmethod
     def set(cls):

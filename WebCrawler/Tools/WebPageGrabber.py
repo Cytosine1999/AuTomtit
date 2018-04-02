@@ -1,9 +1,6 @@
 # coding:utf-8
-import httplib
-import urllib
-import urllib2
-import socket
-import time
+import httplib, urllib, urllib2, socket, time, re, threading
+import requests
 from bs4 import BeautifulSoup
 
 # avoid chunked
@@ -26,80 +23,77 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.3
 
 
 class WebPageGrabber:
-    def __init__(self, name='default', sync=False, timeout=60):
-        # the name of the crawler
-        # crawler with same name will share a same time limit
-        self.name = name
-        # time limit information
-        # synchronized with file defined in 'WebPageGrabber.conf'
-        # owner 'default' is for web pages without pointing out owners
-        # owner 'default' has a default limit which is as least one minute between two grabbing action
-        self.sites = {'default': [60, time.time()]}
-        # set whether to synchronize with file
-        self.sync = sync
-        self.timeout = timeout
+    WPG = {}
+    DOMAIN = re.compile('http[s]?://([\w.]*?)/')
+    LOCK = threading.Lock()
 
-    # add new data to the file
-    def write_sites(self):
-        pass
+    @classmethod
+    def get(cls, name='default'):
+        cls.LOCK.acquire()
+        if name not in cls.WPG:
+            cls.WPG[name] = cls()
+        cls.LOCK.release()
+        return cls.WPG[name]
 
-    # get new data from the file
-    def read_sites(self):
-        pass
+    def __init__(self):
+        # time limit of each site
+        self.sites = {}
+        self.timeout = 60
 
     # modify the time limit
-    def mod_site(self, name, limit=60, t=time.time()):
-        self.sites[name] = [limit, t]
-        if self.sync:
-            self.write_sites()
+    def mod_site(self, site, limit=60):
+        self.LOCK.acquire()
+        if site not in self.sites:
+            self.sites[site] = [limit, time.time()]
+        else:
+            self.sites[site][0] = limit
+        self.LOCK.release()
 
     # get time limit information
     def get_site(self, site):
+        self.LOCK.acquire()
         if site not in self.sites:
-            self.mod_site(site)
-        if self.sync:
-            self.read_sites()
-        return self.sites[site]
+            self.sites[site] = [60, time.time()]
+        wait_time = self.sites[site][1] - time.time()
+        self.sites[site][1] += self.sites[site][0]
+        self.LOCK.release()
+        return max(0, wait_time)
 
-    # grab a web page which owns to 'site' and with reties less than 'num_retries'
-    def grab_page(self, url, site='default', num_retries=2):
+    def grab_page(self, url, num_retries=2):
         # ensure the time limit between two grabbing action
-        site_limit = self.get_site(site)
-        t = site_limit[1] - time.time()
-        if t > 0:
-            time.sleep(t)
-        self.mod_site(site, site_limit[0], time.time() + site_limit[0])
-
+        site = self.DOMAIN.findall(url)[0]
+        wait_time = self.get_site(site)
+        time.sleep(wait_time)
         # start grabbing web page
         print 'Grabbing web page: ' + BLUE + url + RESET
         request = urllib2.Request(url, headers=HEADERS)
         try:
             return urllib2.urlopen(request, timeout=self.timeout)
         except urllib2.HTTPError as e:
-            print RED + 'Can\'t open ' + BLUE + url + RED + ':', e, RESET
+            print RED + 'Opening ' + BLUE + url + RED + ':', e, RESET
             # retry while encountered server-end error
             if num_retries > 0 and (e.code >= 500):
-                return self.grab_page(url, site, num_retries - 1)
+                return self.grab_page(url, num_retries - 1)
             else:
                 return None
         except socket.error as e:
             print RED + 'Opening ' + BLUE + url + RED, e, RESET
             if num_retries > 0:
-                return self.grab_page(url, site, num_retries - 1)
+                return self.grab_page(url, num_retries - 1)
             else:
                 return None
         except urllib2.URLError as e:
             print RED + 'Can\'t open ' + BLUE + url + RED + ':', e, RESET
             return None
 
-    def parse_page(self, url, site='default', mod='html5lib', num_retries=2):
-        response = self.grab_page(url, site, num_retries)
+    def parse_page(self, url, mod='html5lib', num_retries=2, lock=None):
+        response = self.grab_page(url, num_retries)
         try:
             return BeautifulSoup(response, mod)
         except Exception as e:
             print RED + 'Parsing ' + BLUE + url + RED, e, RESET
             if num_retries > 0:
-                return self.parse_page(url, site, mod, num_retries - 1)
+                return self.parse_page(url, mod, num_retries - 1)
 
     def download(self, url, file_name, num_retries=2):
         print 'Downloading ' + BLUE + url + RESET
@@ -111,4 +105,3 @@ class WebPageGrabber:
                 return self.download(url, file_name,  num_retries - 1)
             else:
                 return None
-

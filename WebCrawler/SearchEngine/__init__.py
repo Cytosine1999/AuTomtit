@@ -21,18 +21,19 @@ class ExtractError(SearchError):
 # you may need to modify the time limit between each grabbing action which has a default value one minute
 class SearchEngine:
     @classmethod
-    def set(cls, time_limit=60, time_out=60, retries=2):
+    def set(cls, time_limit={}, time_out=60, retries=2):
         # this member is used for grabbing page
-        cls.grabber = WebPageGrabber(cls.__name__, True)
-        cls.grabber.mod_site('IMDb', time_limit)
+        cls.grabber = WebPageGrabber.get()
         cls.grabber.timeout = time_out
         cls.language = 'html5lib'
         cls.num_retries = retries
+        for key, value in time_limit.iteritems():
+            cls.grabber.mod_site(key, value)
 
     # you may need to modify some of the values
     def __init__(self):
         # this member stores the current key word
-        self.key_word = ''
+        self.key_words = ''
         # this member stores current page index
         self.cur_num_page = 0
         # this member stores 'BeautifulSoup' object of current page
@@ -40,7 +41,7 @@ class SearchEngine:
 
     # reset
     def reset(self):
-        self.key_word = ''
+        self.key_words = ''
         self.cur_num_page = 0
         self.cur_page = None
 
@@ -50,7 +51,7 @@ class SearchEngine:
 
     @classmethod
     def html_parse(cls, url):
-        respond = cls.grabber.parse_page(url, cls.__name__, cls.language, cls.num_retries)
+        respond = cls.grabber.parse_page(url, cls.language, cls.num_retries)
         if respond is None:
             raise WebError()
         else:
@@ -71,9 +72,9 @@ class SearchEngine:
         return True
 
     # set a new key word
-    def search(self, key_word):
+    def search(self, key_words):
         self.reset()
-        self.key_word = key_word
+        self.key_words = key_words
         return self.mod_current_page()
 
     # first test
@@ -87,7 +88,7 @@ class SearchEngine:
         raise NotImplementedError
 
     def result(self):
-        pass
+        return self.results().next()
 
     # return an iterator of results
     def results(self):
@@ -109,5 +110,5 @@ class SearchEngine:
     def unwrap(fn):
         try:
             return fn()
-        except Exception:
+        except (IndexError, AttributeError, TypeError):
             return None
