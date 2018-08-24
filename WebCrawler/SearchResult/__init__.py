@@ -39,10 +39,13 @@ class SearchResult:
         return string
 
     def __getattr__(self, item):
-        try:
-            return self.__dict__[item]
-        except KeyError:
-            return None
+        return None
+
+    def __setattr__(self, key, value):
+        if value is not None:
+            self.__dict__[key] = value
+        elif key in self.__dict__:
+            self.__dict__.pop(key)
 
     def update(self, attr):
         if attr is not None:

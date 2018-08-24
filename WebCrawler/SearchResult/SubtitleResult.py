@@ -1,14 +1,12 @@
 import os
 
 from .__init__ import SearchResult
-from WebCrawler.Tools.Matcher import DictionaryMatcher
-from WebCrawler.Tools.Decompresser import decompress
-from WebCrawler.Tools.WebPageGrabber import WebPageGrabber
+from ..Tools.Matcher import DictionaryMatcher
+from ..Tools.Decompresser import decompress
+from ..Tools import WebPageGrabber
 
 
 class SubtitleResult(SearchResult):
-    wpg = WebPageGrabber.get()
-
     @classmethod
     def set(cls):
         cls.MATCHER.update({
@@ -24,5 +22,5 @@ class SubtitleResult(SearchResult):
         if not os.path.exists(file_path):
             os.makedirs(file_path)
         file_name = (file_path + self.name).encode('utf-8')
-        self.wpg.download(self.link, file_name)
+        WebPageGrabber.download(self.link, file_name)
         decompress(file_name)

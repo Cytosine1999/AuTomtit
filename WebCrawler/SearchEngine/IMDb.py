@@ -1,15 +1,11 @@
 import os
-import urllib.request, urllib.error, urllib.parse
 import re
 
-from WebCrawler.SearchEngine.__init__ import SearchEngine
-from WebCrawler.SearchResult import SearchResult
-from WebCrawler.Tools.WebPageGrabber import WebPageGrabber
+from .__init__ import SearchEngine
+from ..SearchResult import SearchResult
 
 
 class IMDbResult(SearchResult):
-    WPG = WebPageGrabber.get()
-
     def get_type(self):
         pass
 
@@ -36,10 +32,10 @@ class IMDbResult(SearchResult):
 
 
 class IMDb(SearchEngine):
-    DOMAIN = 'https://www.imdb.com'
+    DOMAIN_BASE = 'https://www.imdb.com'
     BRACKET = re.compile('\((.*?)\)', re.DOTALL)
-    IMBD_ID = re.compile('nm\d+|tt\d+')
-    SE_EP = re.compile('[Ss].*?[0]*(\d+).*?[Ee].*?[0]*(\d+)', re.DOTALL)
+    IMDB_ID = re.compile('(nm|tt)\d+')
+    SEASON_EPISODE = re.compile('[Ss].*?(?P<season>\d+).*?[Ee].*?(?P<episode>\d+)', re.DOTALL)
 
     def __init__(self):
         SearchEngine.__init__(self)
@@ -48,7 +44,7 @@ class IMDb(SearchEngine):
     def generate_url(self, page=0):
         head = 'https://www.imdb.com/find?ref_=nv_sr_fn&q='
         tail = '&s=tt'
-        return head + urllib.parse.quote(self.key_words) + tail
+        return head + self.url_parse(self.key_words) + tail
 
     def first_test(self):
         return True
@@ -57,7 +53,7 @@ class IMDb(SearchEngine):
         return False
 
     def results_in_page(self):
-        for each in self.extract_search_page(self.cur_page):
+        for each in self.extract_search_page(self._cur_page):
             item = IMDbResult(self.extract_search_item(each))
             if self.details:
                 item.update(self.get_id(item.id, informed=True))
@@ -72,14 +68,14 @@ class IMDb(SearchEngine):
         info = item.select('td.result_text')[0]
         info_strings = info.stripped_strings
         name = next(info_strings)
-        IMDb_id = cls.IMBD_ID.findall(info.a['href'])[0]
+        IMDb_id = cls.IMDB_ID.search(info.a['href']).group()
         description = cls.BRACKET.findall(next(info_strings))
         reference = info.select('small')
-        se_ep = cls.unwrap(lambda: cls.SE_EP.findall(cls.un_strings(reference[0]))[0])
+        se_ep = cls.unwrap(lambda: cls.SEASON_EPISODE.search(cls.un_strings(reference[0])))
         reference_string = cls.unwrap(lambda: reference[1].stripped_strings)
         cls.unwrap(lambda: next(reference_string))
         parent_name = cls.unwrap(lambda: next(next(reference_string)))
-        parent_description = cls.unwrap(lambda: cls.BRACKET.findall(next(reference_string)))
+        parent_description = cls.unwrap(lambda: cls.BRACKET.search(next(reference_string)))
         return {
             'name': name,
             'id': IMDb_id,
@@ -87,8 +83,8 @@ class IMDb(SearchEngine):
             'time': cls.unwrap(lambda: description[0] if len(description[0]) == 4 else None),
             'type': cls.unwrap(lambda: description[1]),
             'aka': cls.unwrap(lambda: info.select('i')[0].string),
-            'season': cls.unwrap(lambda: int(se_ep[0])),
-            'episode': cls.unwrap(lambda: int(se_ep[1])),
+            'season': cls.unwrap(lambda: int(se_ep.group('season'))),
+            'episode': cls.unwrap(lambda: int(se_ep.group('episode'))),
             'parent_name': parent_name,
             'parent_id': cls.unwrap(lambda: reference[1].a['href'].split('/')[2]),
             'parent_time': cls.unwrap(lambda: parent_description[0] if len(parent_description[0]) == 4 else None),
@@ -113,6 +109,7 @@ class IMDb(SearchEngine):
                                 yield episode_item
                             else:
                                 break
+
                     return season_iter
             else:
                 url = 'https://www.imdb.com/title/' + IMDb_id + '/'
@@ -131,13 +128,13 @@ class IMDb(SearchEngine):
     @classmethod
     def extract_season_item(cls, item):
         image = item.select('div.image')[0].a
-        se_ep = cls.SE_EP.findall(next(image.stripped_strings))[0]
+        se_ep = cls.SEASON_EPISODE.findall(next(image.stripped_strings))[0]
         info = item.select('div.info')[0]
         return {
             'name': info.strong.string,
-            'id': cls.IMBD_ID.findall(image['href'])[0],
-            'season': int(se_ep[0]),
-            'episode': int(se_ep[1]),
+            'id': cls.IMDB_ID.search(image['href']).group(),
+            'season': int(se_ep.group('season')),
+            'episode': int(se_ep.group('episode')),
             'time': info.select('div.airdate')[0].string.strip(),
             'rate': info.select('span.ipl-rating-star__rating')[0].string,
             'summary': info.select('div.item_description')[0].string.strip()
@@ -156,11 +153,11 @@ class IMDb(SearchEngine):
         @cls.unwrap
         def credit_summaries():
             for each in cls.unwrap(lambda: plot_summary.select('div.credit_summary_item')):
-                credits = each.select('> span')
+                staffs = each.select('> span')
                 value = {}
-                for credit in credits:
+                for staff in staffs:
                     try:
-                        value[credit.select('span')[0].string] = cls.IMBD_ID.findall(credit.a['href'])[0]
+                        value[staff.select('span')[0].string] = cls.IMDB_ID.search(staff.a['href']).group()
                     except TypeError:
                         pass
                 results[each.h4.string.replace(':', '')] = value
@@ -209,9 +206,6 @@ class IMDb(SearchEngine):
         for each in obj:
             string += each.string + ' '
         return string
-
-
-IMDb.set({'www.imdb.com': 5}, 10)
 
 
 if __name__ == '__main__':

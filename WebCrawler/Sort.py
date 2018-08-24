@@ -1,9 +1,9 @@
 # import Settings
-from .SearchEngine import ExtractError
-from .SearchEngine.ThePirateBay import ThePirateBay
-from .SearchEngine.EZTV import EZTV
-from .SearchEngine.ZiMuKu import ZiMuKu
-from .SearchEngine.IMDb import IMDb
+from WebCrawler.SearchEngine import ExtractError
+from WebCrawler.SearchEngine.ThePirateBay import ThePirateBay
+from WebCrawler.SearchEngine.EZTV import EZTV
+from WebCrawler.SearchEngine.ZiMuKu import ZiMuKu
+from WebCrawler.SearchEngine.IMDb import IMDb
 
 RED = '\033[31m'
 BLUE = '\033[4;;34m'
@@ -29,15 +29,9 @@ class Sort:
             self.top.append((val, obj))
             if len(self.top) > self.size:
                 self.top = self.top[0:5]
-        """
-        print '['
-        for each in self.top:
-            print '    (', each[0], ',', each[1].name, ')'
-        print ']'
-        """
 
 
-def search():
+def run():
     # settings = Settings.load()
     ses = [ThePirateBay(), EZTV(), ZiMuKu(), IMDb()]
     while True:

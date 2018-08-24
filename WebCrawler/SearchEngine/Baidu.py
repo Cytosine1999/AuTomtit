@@ -1,8 +1,6 @@
 # coding:utf-8
-import urllib.request, urllib.error, urllib.parse
-
 from .__init__ import SearchEngine
-from WebCrawler.SearchResult.HTTPResult import HTTPResult
+from ..SearchResult.HTTPResult import HTTPResult
 
 
 class BaiduResult(HTTPResult):
@@ -13,10 +11,10 @@ class Baidu(SearchEngine):
     def generate_url(self, page=0):
         head = 'https://baidu/s?wd='
         tail = '&pn='
-        return head + urllib.parse.quote(self.key_words) + tail + str(page * 10)
+        return head + self.url_parse(self.key_words) + tail + str(page * 10)
 
     def test(self):
-        footer = self.cur_page.find(id='page').select('span.pc')
+        footer = self._cur_page.find(id='page').select('span.pc')
         if len(footer) > 0:
             pass
         else:
@@ -24,7 +22,7 @@ class Baidu(SearchEngine):
         return False
 
     def results_in_page(self):
-        for result in self.cur_page.find(id='content_left').select('div'):
+        for result in self._cur_page.find(id='content_left').select('div'):
             title_msg = result.select('h3.t')[0]
             # description_msg = result.select('div.c-abstract')[0]
             # source_msg = result.select('div.f13')[0]
@@ -32,6 +30,3 @@ class Baidu(SearchEngine):
                 'name': title_msg.a.string,
                 'link': title_msg.a['href']
             })
-
-
-Baidu.set({'www.baiidu.com': 5}, 10)

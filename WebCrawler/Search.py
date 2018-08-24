@@ -1,16 +1,16 @@
 # import Settings
-from .SearchEngine import ExtractError
-from .SearchEngine.ThePirateBay import ThePirateBay
-from .SearchEngine.EZTV import EZTV
-from .SearchEngine.ZiMuKu import ZiMuKu
-from .SearchEngine.IMDb import IMDb
+from WebCrawler.SearchEngine import ExtractError
+from WebCrawler.SearchEngine.ThePirateBay import ThePirateBay
+from WebCrawler.SearchEngine.EZTV import EZTV
+from WebCrawler.SearchEngine.ZiMuKu import ZiMuKu
+from WebCrawler.SearchEngine.IMDb import IMDb
 
 RED = '\033[31m'
 BLUE = '\033[4;;34m'
 RESET = '\033[0m'
 
 
-def search():
+def run():
     # settings = Settings.load()
     ses = [ThePirateBay(), EZTV(), ZiMuKu(), IMDb()]
     while True:
@@ -39,7 +39,8 @@ def search():
                 for i, result in enumerate(se.results()):
                     index = i + 1
                     print('# Number:', index)
-                    print(result, '-' * 70)
+                    print(result)
+                    print('-' * 70)
                     # result.download(settings['download path'] + key_word + ' ' + str(index) + '/')
                     if (index % 10) == 0:
                         if input() == 'exit':

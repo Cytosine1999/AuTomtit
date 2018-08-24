@@ -1,46 +1,100 @@
 import os
+import time
 import threading
 
 import Settings
+from Log import Log
+# from WebCrawler.Tools import StatusMachine
 # from Sort import Sort
-from WebCrawler.SearchEngine import ExtractError
+# from WebCrawler.SearchEngine import ExtractError
 # from SearchEngine.IMDb import IMDb
-from WebCrawler.SearchEngine.EZTV import EZTV
+# from WebCrawler.SearchEngine.EZTV import EZTV
 from WebCrawler.SearchEngine.ThePirateBay import ThePirateBay
 from WebCrawler.SearchEngine.ZiMuKu import ZiMuKu
 
-RED = '\033[31m'
-BLUE = '\033[4;;34m'
-GREEN = '\033[32m'
-YELLOW = '\033[33m'
-RESET = '\033[0m'
-
 
 class Search(threading.Thread):
-    LOCK = threading.Lock()
-
     def __init__(self, nm, se, kw, color):
         threading.Thread.__init__(self)
-        self.nm = nm
         self.se = se
         self.kw = kw
-        self.color = color
+        self.log = Log(nm, color)
 
     def run(self):
         if self.se.search(self.kw):
             for result in self.se.results():
-                self.LOCK.acquire()
-                print(self.color + '$ thread', self.nm, RESET)
-                print(result.name)
-                self.LOCK.release()
-        self.LOCK.acquire()
-        print(self.color + '$ thread', self.nm, 'terminated' + RESET)
-        self.LOCK.release()
+                self.log.msg(None, (
+                    (str(result), 'default'),
+                    ('-' * 70, 'default')
+                ), print=True, linebreak=True)
+        self.log.msg(None, (
+            ('terminated', self.log.color)
+        ), print=True)
+
+    def status(self):
+        pass
+
+
+class Transmission(threading.Thread):
+    def __init__(self, path, torrents, sleep_time):
+        threading.Thread.__init__(self)
+        self.path = path
+        self.torrents = torrents
+        self.sleep_time = sleep_time
+
+    # keep transmission downloading
+    def run(self):
+        flag = 0
+
+        self.torrents[0].download(self.path)
+        self.torrents[0].torrent.start()
+
+        while True:
+            self.torrents[flag].torrent.update()  # need this to update data
+            eta = self.torrents[flag].torrent.eta
+            if self.torrents[flag].torrent.status == '':
+                self.torrents[flag].torrent.stop()
+                flag += 1
+                if flag < len(self.torrents):
+                    self.torrents[flag].torrent.start()
+            time.sleep(self.sleep_time)
+
+    def status(self):
+        pass
+
+
+class VideoObject:
+    def __init__(self):
+        pass
+
+
+class Sort:
+    def __init__(self, size):
+        self.size = size
+        self.top = []
+
+    def get_top(self):
+        return self.top[0][1]
+
+    def push(self, val, obj):
+        if len(self.top) == 0:
+            self.top.append((val, obj))
+        else:
+            for index, each in enumerate(self.top):
+                if val > each[0]:
+                    self.top.insert(index, (val, obj))
+                    break
+            self.top.append((val, obj))
+            if len(self.top) > self.size:
+                self.top = self.top[0:self.size]
+
+    def get_tops(self):
+        return list(map(lambda x: x[1], self.top))
 
 
 def run():
-    tpb = Search('thepiratebay', ThePirateBay(), 'doctor who', GREEN)
-    zmk = Search('zimuku', ZiMuKu(), 'doctor who', YELLOW)
+    tpb = Search('thepiratebay', ThePirateBay(), 'doctor who', 'green')
+    zmk = Search('zimuku', ZiMuKu(), 'doctor who', 'yellow')
 
     tpb.start()
     zmk.start()
@@ -74,3 +128,21 @@ def run():
     else:
         print 'Can\'t find \"' + key_words + '\"'
     """
+
+
+# the main thread keep watching at other threads
+def run_():
+    settings = Settings.load()
+    download_path = settings['download path']
+    key_words = input('Please enter key words:')
+    pirate_bay = ThePirateBay()
+    path = download_path + '/' + key_words
+    if not os.path.exists(path):
+        os.makedirs(path)
+    s = Sort(5)
+    if pirate_bay.search(key_words):
+        for result in pirate_bay.results():
+            s.push(result.rate(), result)
+        transmission = Transmission(path, s.get_tops(), 60)
+        transmission.start()
+        transmission.join()

@@ -1,5 +1,8 @@
 import time
-# import re
+import re
+
+
+GB = re.compile('[\d\.]+[\s]+[Gg].+?[Bb]')
 
 
 def get_time(msg):
