@@ -1,6 +1,6 @@
 import re
 
-import Settings
+from ... import Settings
 
 
 class SearchResult:

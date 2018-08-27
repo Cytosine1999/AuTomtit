@@ -1,0 +1,25 @@
+{% extends 'static/base.html' %}
+
+
+{% block title %}AuTomtit | Search{% endblock %}
+
+{% block header %}{% include 'static/navbar.html' with key_words=name %}{% endblock %}
+
+{% block main %}
+    <main class="container py-4">
+        <div class="m-0" id="search-ajax-info"></div>
+        <div class="m-0" id="search-ajax-container"></div>
+        <div class="m-0" id="search-ajax-hint">
+            <div class="jumbotron my-4" id="search-ajax-hint-jumbotron">
+                <h4>Loading...</h4>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block footer %}{% include 'static/footer.html' %}{% endblock %}
+
+{# This is the ajax calling which carries out search action. #}
+{% block import_after %}
+    <script>$(result_page_ajax({key_words: '{{ name }}', page: 0}));</script>
+{% endblock %}

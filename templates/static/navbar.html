@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-md sticky-top navbar-dark bg-dark px-0">
+    <div class="navbar-nav mx-auto">
+        <p class="m-0">
+            <a class="navbar-brand mx-0 px-2" href="/">AuTomtit</a>
+
+            <button class="btn-clear float-right navbar-toggler" type="button" data-toggle="collapse"
+                    data-target=".navbarToggler" aria-controls="navbarToggler" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </p>
+
+        <div class="collapse navbar-collapse navbarToggler">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="#" class="nav-link p-2">About</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link p-2">Content</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link p-2">Log In</a>
+                </li>
+            </ul>
+        </div>
+
+        <form class="form-inline px-2" method="get" action="/search/">
+            <div class="rounded bg-white p-0">
+                <input class="btn-clear p-0 my-1 ml-2" type="search" name="key_words" maxlength="500" minlength="1"
+                       placeholder="Search" aria-label="Search" {% if key_words %} value="{{ key_words }}"{% endif %}
+                       required>
+                <button class="btn-clear my-1 mr-1" type="submit" value="search">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</nav>

@@ -1,0 +1,35 @@
+{% if results %}
+    {% for each in results %}
+        <div class="card my-2 search-ajax-has">
+            <div class="card-header p-2">
+                <h5 class="card-title m-0">
+                    <a href="{{ each.link }}">{{ each.name }}</a>
+                </h5>
+            </div>
+            <ul class="card-body nav flex-column p-2">
+                <li class="nav-item">
+                    <p class="m-1">type: {{ each.type }}</p>
+                </li>
+                <li class="nav-item">
+                    <p class="m-1">time: {{ each.time }}</p>
+                </li>
+                <li class="nav-item">
+                    <p class="m-1">size: {{ each.size }}</p>
+                </li>
+                <li class="nav-item">
+                    <p class="m-1">uploader: {{ each.uploader }}</p>
+                </li>
+                <li class="nav-item">
+                    <p class="m-1">se: {{ each.num_seeder }}</p>
+                </li>
+                <li class="nav-item">
+                    <p class="m-1">le: {{ each.num_leecher }}</p>
+                </li>
+            </ul>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="jumbotron my-4 search-ajax-none">
+        <h4>Sorry, there is no (more) results.</h4>
+    </div>
+{% endif %}

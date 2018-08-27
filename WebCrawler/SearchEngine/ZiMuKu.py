@@ -3,10 +3,6 @@ from .__init__ import SearchEngine
 from ..SearchResult.SubtitleResult import SubtitleResult
 
 
-BLUE = '\033[4;;34m'
-RESET = '\033[0m'
-
-
 class ZiMuKuResult(SubtitleResult):
     pass
 

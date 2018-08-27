@@ -1,7 +1,7 @@
 import transmission_rpc
 
 from .__init__ import SearchResult
-from WebCrawler.Tools.Matcher import ValueMatcher
+from ..Tools.Matcher import ValueMatcher
 
 tc = transmission_rpc.Client('localhost', 9091, 'admin', 'admin')
 

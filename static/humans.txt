@@ -1,0 +1,16 @@
+# The humans responsible & technology colophon
+
+# TEAM
+
+    cytosine -- everything -- <twitter>
+
+# THANKS
+
+    <name>
+
+# TECHNOLOGY COLOPHON
+
+    CSS3, HTML5
+    jQuery, Modernizr, Normalize.css, bootstrap
+    Nginx, Django
+

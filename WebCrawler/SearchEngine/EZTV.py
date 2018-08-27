@@ -3,14 +3,11 @@ from .__init__ import SearchEngine
 from ..SearchResult.MagnetResult import MagnetResult
 from ..SearchResult.VideoResult import VideoResult
 
-BLUE = '\033[4;;34m'
-RESET = '\033[0m'
-
 
 class EZTVResult(MagnetResult, VideoResult):
     def __str__(self):
         string = '# ' + self.name + '\n\n'
-        string += BLUE + self.link + RESET + '\n\n'
+        string += self.link + '\n\n'
         string += '# Upload time: ' + self.time
         string += '  Size: ' + self.size
         string += '   SE: ' + str(self.num_seeder) + '\n'

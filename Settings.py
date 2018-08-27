@@ -3,15 +3,19 @@ import json
 import shutil
 import filecmp
 
-from Log import Log
+
+from .Log import Log
+
 
 RED = '\033[31m'
 GREEN = '\033[32m'
 RESET = '\033[0m'
 
+
 DIR, _ = os.path.split(os.path.realpath(__file__))
-DIR_BACKUP = DIR + '/.settings_backup.json'
-DIR += '/settings.json'
+DIR_BACKUP = os.path.join(DIR, '.settings_backup.json')
+DIR = os.path.join(DIR, 'settings.json')
+
 
 SETTINGS = None
 FLAG = False

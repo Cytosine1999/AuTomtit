@@ -4,11 +4,6 @@ from ..SearchResult.MagnetResult import MagnetResult
 from ..SearchResult.VideoResult import VideoResult
 
 
-RED = '\033[31m'
-BLUE = '\033[4;;34m'
-RESET = '\033[0m'
-
-
 class ThePirateBayResult(MagnetResult, VideoResult):
     @classmethod
     def set(cls):
@@ -24,7 +19,7 @@ class ThePirateBayResult(MagnetResult, VideoResult):
         string += '# Type: ' + self.type
         string += '   SE: ' + str(self.num_seeder)
         string += '   LE: ' + str(self.num_leecher) + '\n\n'
-        string += BLUE + self.link + RESET + '\n\n'
+        string += self.link + '\n\n'
         string += '# Upload time: ' + self.time
         string += '   Size: ' + self.size
         string += '   Uploader: ' + self.uploader + '\n'

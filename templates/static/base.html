@@ -1,0 +1,47 @@
+<!-- HTML5 Boilerplate v6.1.0 | MIT License | https://html5boilerplate.com/ -->
+
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}{%  endblock %}</title>
+    <meta name="description" content="AuTomtit: a powerful time-saving downloading tool.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="stylesheet" href="/css/vendor/normalize.min.css">
+    <link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/main.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+    {% block import_before %}{% endblock %}
+</head>
+
+<body class="bg-light">
+<!--[if lte IE 9]>
+<p class="browserupgrade">
+    You are using an <strong>outdated</strong> browser.
+    Please <a href="https://browsehappy.com/">upgrade your browser</a>
+    to improve your experience and security.
+</p>
+<![endif]-->
+
+
+{% block header %}{% endblock %}
+
+{% block main %}{% endblock %}
+
+{% block footer %}{% endblock %}
+
+
+<script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+<script src="/js/vendor/jquery-3.3.1.min.js"></script>
+<script src="/js/vendor/bootstrap.bundle.min.js"></script>
+<script src="/js/plugins.min.js"></script>
+<script src="/js/main.min.js"></script>
+
+{% block import_after %}{% endblock %}
+</body>
+</html>
