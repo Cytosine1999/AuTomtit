@@ -1,4 +1,4 @@
-*.pyc
+﻿*.pyc
 .idea/*
 *.sqlite3
 *.map

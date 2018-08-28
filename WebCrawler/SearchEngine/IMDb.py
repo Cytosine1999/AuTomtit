@@ -1,7 +1,6 @@
-import os
 import re
 
-from .__init__ import SearchEngine
+from . import SearchEngine
 from ..SearchResult import SearchResult
 
 
@@ -209,6 +208,10 @@ class IMDb(SearchEngine):
 
 
 if __name__ == '__main__':
+    import sys
+    import os
+    sys.path.append('./')
+
     se = IMDb()
     se.search('better call saul')
     se.details = True

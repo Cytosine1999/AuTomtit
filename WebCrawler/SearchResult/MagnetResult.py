@@ -1,9 +1,9 @@
-import transmission_rpc
+# import transmission_rpc
 
-from .__init__ import SearchResult
+from . import SearchResult
 from ..Tools.Matcher import ValueMatcher
 
-tc = transmission_rpc.Client('localhost', 9091, 'admin', 'admin')
+# tc = transmission_rpc.Client('localhost', 9091, 'admin', 'admin')
 
 
 class MagnetResult(SearchResult):
@@ -17,9 +17,9 @@ class MagnetResult(SearchResult):
         seeder = MagnetResult.MATCHER['seeder'].match(self.num_seeder)
         return seeder
 
-    def download(self, path):
-        if self.torrent is None:
-            self.__dict__['torrent'] = tc.add_torrent(self.link, download_dir=path)
+    # def download(self, path):
+    #     if self.torrent is None:
+    #         self.__dict__['torrent'] = tc.add_torrent(self.link, download_dir=path)
 
 
 MagnetResult.load()

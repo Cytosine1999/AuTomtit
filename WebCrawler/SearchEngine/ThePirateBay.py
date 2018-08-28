@@ -1,4 +1,3 @@
-# coding:utf-8
 from .__init__ import SearchEngine
 from ..SearchResult.MagnetResult import MagnetResult
 from ..SearchResult.VideoResult import VideoResult

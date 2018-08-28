@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django import forms
 from django.http import HttpResponse, HttpResponseRedirect
-# from AuTomtit.WebCrawler.SearchEngine.ThePirateBay import ThePirateBay
-from AuTomtit.WebCrawler.SearchEngine.EZTV import EZTV
+from AuTomtit.WebCrawler.SearchEngine.ThePirateBay import ThePirateBay
+# from AuTomtit.WebCrawler.SearchEngine.EZTV import EZTV
 
 
 class SearchForm(forms.Form):
@@ -19,7 +19,7 @@ class ResultSplitForm(forms.Form):
 
 
 class Search:
-    search_engine = EZTV()
+    search_engine = ThePirateBay()
     search_engine_iter = None
 
     @classmethod

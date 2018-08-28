@@ -1,6 +1,6 @@
 import os
 
-from .__init__ import SearchResult
+from . import SearchResult
 from ..Tools.Matcher import DictionaryMatcher
 from ..Tools.Decompresser import decompress
 from ..Tools import WebPageGrabber

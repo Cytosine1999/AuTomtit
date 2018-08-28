@@ -1,9 +1,9 @@
 # import Settings
-from WebCrawler.SearchEngine import ExtractError
-from WebCrawler.SearchEngine.ThePirateBay import ThePirateBay
-from WebCrawler.SearchEngine.EZTV import EZTV
-from WebCrawler.SearchEngine.ZiMuKu import ZiMuKu
-from WebCrawler.SearchEngine.IMDb import IMDb
+from .SearchEngine import ExtractError
+from .SearchEngine.ThePirateBay import ThePirateBay
+from .SearchEngine.EZTV import EZTV
+from .SearchEngine.ZiMuKu import ZiMuKu
+from .SearchEngine.IMDb import IMDb
 
 RED = '\033[31m'
 BLUE = '\033[4;;34m'

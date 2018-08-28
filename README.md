@@ -1,4 +1,6 @@
 # AuTomtit
+![Image text](/static/img/AuTomtit.png)
+
 We intend to build a powerful time-saving downloading tool which include a web crawler searching for the best sources, a downloader downloading as fast as possible and a server allows you to view the result anywhere.
 
 The AuTomtit will working on any devices running Unix-like OS such as a Raspberry Pi. The only thing you need to do is input the key words and AuTomtit will do all the other things for you automatically 24-7.

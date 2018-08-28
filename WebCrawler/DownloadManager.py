@@ -2,15 +2,14 @@ import os
 import time
 import threading
 
-import Settings
-from Log import Log
-# from WebCrawler.Tools import StatusMachine
-# from Sort import Sort
-# from WebCrawler.SearchEngine import ExtractError
-# from SearchEngine.IMDb import IMDb
-# from WebCrawler.SearchEngine.EZTV import EZTV
-from WebCrawler.SearchEngine.ThePirateBay import ThePirateBay
-from WebCrawler.SearchEngine.ZiMuKu import ZiMuKu
+from .. import Settings
+from ..Log import Log
+# from .Sort import Sort
+# from .SearchEngine import ExtractError
+# from .SearchEngine.IMDb import IMDb
+# from .SearchEngine.EZTV import EZTV
+from .SearchEngine.ThePirateBay import ThePirateBay
+from .SearchEngine.ZiMuKu import ZiMuKu
 
 
 class Search(threading.Thread):

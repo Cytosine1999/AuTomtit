@@ -1,4 +1,4 @@
-from .__init__ import SearchResult
+from . import SearchResult
 from ..Tools.Matcher import DictionaryMatcher, ValueMatcher
 from ..Tools.StringResolve import get_size
 

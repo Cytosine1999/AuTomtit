@@ -1,5 +1,5 @@
 # coding:utf-8
-from .__init__ import SearchEngine
+from . import SearchEngine
 from ..SearchResult.HTTPResult import HTTPResult
 
 
