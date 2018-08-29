@@ -1,5 +1,5 @@
 # AuTomtit
-![Image text](/static/img/AuTomtit.png)
+![AuTomtit LOGO](/static/img/AuTomtit.png)
 
 We intend to build a powerful time-saving downloading tool which include a web crawler searching for the best sources, a downloader downloading as fast as possible and a server allows you to view the result anywhere.
 

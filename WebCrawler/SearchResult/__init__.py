@@ -27,10 +27,12 @@ class SearchResult:
         profile[cls.profile_name] = cls.__dict__[cls.member_name]
         Settings.dump(profile)
 
-    def __init__(self, attr):
-        for key, value in attr.items():
+    __slots__ = ('name',)
+
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
             if value is not None:
-                self.__dict__[key] = value
+                self.__setattr__(key, value)
 
     def __str__(self):
         string = self.__class__.__name__ + ':\n'
@@ -41,17 +43,9 @@ class SearchResult:
     def __getattr__(self, item):
         return None
 
-    def __setattr__(self, key, value):
-        if value is not None:
-            self.__dict__[key] = value
-        elif key in self.__dict__:
-            self.__dict__.pop(key)
-
-    def update(self, attr):
-        if attr is not None:
-            for key, value in attr.items():
-                if value is not None:
-                    self.__dict__[key] = value
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            self.__setattr__(key, value)
 
     def rate(self):
         return 0

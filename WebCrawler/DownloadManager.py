@@ -3,7 +3,6 @@ import time
 import threading
 
 from .. import Settings
-from ..Log import Log
 # from .Sort import Sort
 # from .SearchEngine import ExtractError
 # from .SearchEngine.IMDb import IMDb
@@ -13,22 +12,19 @@ from .SearchEngine.ZiMuKu import ZiMuKu
 
 
 class Search(threading.Thread):
-    def __init__(self, nm, se, kw, color):
+    def __init__(self, nm, se, kw):
         threading.Thread.__init__(self)
         self.se = se
         self.kw = kw
-        self.log = Log(nm, color)
+        self.nm = nm
 
     def run(self):
         if self.se.search(self.kw):
             for result in self.se.results():
-                self.log.msg(None, (
-                    (str(result), 'default'),
-                    ('-' * 70, 'default')
-                ), print=True, linebreak=True)
-        self.log.msg(None, (
-            ('terminated', self.log.color)
-        ), print=True)
+                print(self.nm, ':')
+                print(str(result))
+                print('-' * 70)
+        print('terminated')
 
     def status(self):
         pass
@@ -92,8 +88,8 @@ class Sort:
 
 
 def run():
-    tpb = Search('thepiratebay', ThePirateBay(), 'doctor who', 'green')
-    zmk = Search('zimuku', ZiMuKu(), 'doctor who', 'yellow')
+    tpb = Search('thepiratebay', ThePirateBay(), 'doctor who')
+    zmk = Search('zimuku', ZiMuKu(), 'doctor who')
 
     tpb.start()
     zmk.start()

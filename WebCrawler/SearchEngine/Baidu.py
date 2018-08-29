@@ -13,6 +13,9 @@ class Baidu(SearchEngine):
         tail = '&pn='
         return head + self.url_parse(self.key_words) + tail + str(page * 10)
 
+    def get_results_num(self):
+        pass
+
     def test(self):
         footer = self._cur_page.find(id='page').select('span.pc')
         if len(footer) > 0:
@@ -26,7 +29,7 @@ class Baidu(SearchEngine):
             title_msg = result.select('h3.t')[0]
             # description_msg = result.select('div.c-abstract')[0]
             # source_msg = result.select('div.f13')[0]
-            yield BaiduResult({
+            yield BaiduResult(**{
                 'name': title_msg.a.string,
                 'link': title_msg.a['href']
             })

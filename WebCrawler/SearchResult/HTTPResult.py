@@ -1,4 +1,4 @@
-from .. import SearchResult
+from . import SearchResult
 
 
 class HTTPResult(SearchResult):

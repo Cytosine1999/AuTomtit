@@ -1,3 +1,4 @@
+import os
 import re
 
 from . import SearchEngine
@@ -30,7 +31,7 @@ class IMDbResult(SearchResult):
             self.wpg.download(link, path + '/' + self.name + '.jpg')
 
 
-class IMDb(SearchEngine):
+class IMDb(SearchEngine, new_slots=('details',)):
     DOMAIN_BASE = 'https://www.imdb.com'
     BRACKET = re.compile('\((.*?)\)', re.DOTALL)
     IMDB_ID = re.compile('(nm|tt)\d+')
@@ -45,17 +46,18 @@ class IMDb(SearchEngine):
         tail = '&s=tt'
         return head + self.url_parse(self.key_words) + tail
 
-    def first_test(self):
-        return True
+    def get_results_num(self):
+        string = next(self._cur_page.select('h1.findHeader')[0].stripped_strings).split()
+        return 0 if string[0] == 'No' else int(string[1])
 
     def test(self):
         return False
 
     def results_in_page(self):
         for each in self.extract_search_page(self._cur_page):
-            item = IMDbResult(self.extract_search_item(each))
+            item = IMDbResult(**self.extract_search_item(each))
             if self.details:
-                item.update(self.get_id(item.id, informed=True))
+                item.update(**self.get_id(item.id, informed=True))
             yield item
 
     @classmethod
@@ -208,10 +210,6 @@ class IMDb(SearchEngine):
 
 
 if __name__ == '__main__':
-    import sys
-    import os
-    sys.path.append('./')
-
     se = IMDb()
     se.search('better call saul')
     se.details = True

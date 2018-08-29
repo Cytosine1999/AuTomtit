@@ -40,16 +40,18 @@ class Search:
         if form.is_valid():
             key_words = form.cleaned_data['key_words']
             try:
-                cls.search_engine.search(key_words)
-                cls.search_engine_iter = cls.search_engine.results()
+                if cls.search_engine.search(key_words):
+                    cls.search_engine_iter = cls.search_engine.results()
+                    return render(request, '../templates/result_page.html', {
+                        'name': key_words,
+                        'number': 10,
+                    })
+                else:
+                    cls.search_engine_iter = None
+                    return HttpResponse('<h2>No results.</h2>')
             except Exception as e:
                 print(e)
                 return HttpResponse('<h2>Web error.</h2>')
-            context = {
-                'name': key_words,
-                'number': 10,
-            }
-            return render(request, '../templates/result_page.html', context)
         else:
             return HttpResponse('<h2>Input error.</h2>')
 

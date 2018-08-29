@@ -1,4 +1,4 @@
-from .__init__ import SearchEngine
+from . import SearchEngine
 from ..SearchResult.MagnetResult import MagnetResult
 from ..SearchResult.VideoResult import VideoResult
 
@@ -28,17 +28,20 @@ class ThePirateBayResult(MagnetResult, VideoResult):
 ThePirateBayResult.load()
 
 
-class ThePirateBay(SearchEngine):
+class ThePirateBay(SearchEngine, site_settings={'default': {'num_retries': 5}}):
     def generate_url(self, page=0):
         head = 'https://thepiratebay.cd/search/'
         tail = '/' + str(page) + '/7//'
         return head + self.url_parse(self.key_words) + tail
 
-    def test(self):
+    def get_results_num(self):
         title = self._cur_page.h2.stripped_strings
         next(title)
         msg = next(title).split()
-        return msg[0] != 'No'
+        return 0 if msg[0] == 'No' else int(msg[7])
+
+    def test(self):
+        return self._cur_page_num * 30 <= self.results_num
 
     def results_in_page(self):
         for result_msg in self._cur_page.find(id='searchResult').tbody('tr'):
@@ -46,13 +49,13 @@ class ThePirateBay(SearchEngine):
             msg_iter = result_msg.select('td > font')[0].stripped_strings
             msg = next(msg_iter).split(',')
             number = result_msg.select('td[align]')
-            yield ThePirateBayResult({
-                'type': type_msg[0].string + ' ' + type_msg[1].string,
-                'name': result_msg.select('td > div')[0].a.string,
-                'link': result_msg.select('td > a')[0]['href'],
-                'time': msg[0][9:],
-                'size': msg[1][6:],
-                'uploader': next(msg_iter),
-                'num_seeder': int(number[0].string),
-                'num_leecher': int(number[1].string)
-            })
+            yield ThePirateBayResult(
+                type=type_msg[0].string + ' ' + type_msg[1].string,
+                name=result_msg.select('td > div')[0].a.string,
+                link=result_msg.select('td > a')[0]['href'],
+                time=msg[0][9:],
+                size=msg[1][6:],
+                uploader=next(msg_iter),
+                num_seeder=int(number[0].string),
+                num_leecher=int(number[1].string)
+            )

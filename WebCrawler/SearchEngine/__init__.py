@@ -1,8 +1,10 @@
 import re
+import sys
 import threading
 import time
-import sys
-import urllib
+import urllib.error as url_error
+import urllib.parse as url_parse
+import copy
 
 from ..Tools import WebPageGrabber
 
@@ -16,41 +18,74 @@ class WebError(SearchError):
 
 
 class ExtractError(SearchError):
-    def __init__(self, e):
+    def __init__(self, e, html):
         self.e = e
+        self.html = html
 
     def __str__(self):
-        return str(self.e)
+        return str(self.e) + '\n' * 2 + str(self.html)
 
 
 # a super class of search engines
 # you may need to modify the time limit between each grabbing action which has a default value one minute
 class SearchEngine:
-    _SITES = {
-        'default': {
-            'limit': 5,
-            'num_retries': 2,
-            'language': 'html5lib',
-            'time_out': 10,
-        }
-    }
+    class _SiteSettings:
+        __slots__ = ('limit', 'num_retries', 'language', 'time_out', 'record')
+
+        def __init__(self, **kwargs):
+            for filed in self.__slots__:
+                self.__setattr__(filed, kwargs[filed])
+
+        def to_dict(self):
+            dictionary = {}
+            for filed in self.__slots__:
+                dictionary[filed] = self.__getattribute__(filed)
+            return dictionary
+
+        def update(self, **kwargs):
+            for key, value in kwargs.items():
+                self.__setattr__(key, value)
+
+        def __repr__(self):
+            return str(self.to_dict())
+
     _DOMAIN = re.compile('http[s]?://(?P<domain>[\w.]*?)/')
     _LOCK = threading.Lock()
+    _SITES = {
+        'default': _SiteSettings(
+            limit=5,
+            num_retries=2,
+            language='html5lib',
+            time_out=10,
+            record=time.time(),
+        )
+    }
+
+    def __init_subclass__(cls, site_settings=None, new_slots=None, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls._SITES = copy.deepcopy(SearchEngine._SITES)
+        cls._LOCK = threading.Lock()
+        if site_settings is not None:
+            for key, value in site_settings.items():
+                cls.mod_site(key, **value)
+        if new_slots is not None:
+            cls.__slots__ = SearchEngine.__slots__ + new_slots
+        else:
+            cls.__slots__ = SearchEngine.__slots__
 
     # modify the time limit
     @classmethod
     def mod_site(cls, site, **kwargs):
         lock = cls._LOCK
         if site not in cls._SITES:
-            site_settings = cls._SITES['default']
-            site_settings['record'] = time.time()
-            site_settings.update(kwargs)
+            site_settings = copy.deepcopy(cls._SITES['default'])
+            site_settings.update(**kwargs)
             lock.acquire()
             cls._SITES[site] = site_settings
             lock.release()
         else:
             lock.acquire()
-            cls._SITES[site].update(kwargs)
+            cls._SITES[site].update(**kwargs)
             lock.release()
 
     # get time limit information
@@ -58,8 +93,7 @@ class SearchEngine:
     def get_site(cls, site):
         lock = cls._LOCK
         if site not in cls._SITES:
-            site_settings = cls._SITES['default']
-            site_settings['record'] = time.time()
+            site_settings = copy.deepcopy(cls._SITES['default'])
             lock.acquire()
             cls._SITES[site] = site_settings
             lock.release()
@@ -71,36 +105,37 @@ class SearchEngine:
     def wait(cls, record):
         lock = cls._LOCK
         lock.acquire()
-        wait_time = record['record'] - time.time()
-        record['record'] = time.time() + record['limit']
+        wait_time = record.record - time.time()
+        record.record = time.time() + record.limit
         lock.release()
         return max(0, wait_time)
 
     @classmethod
     def html_parse(cls, url):
         site = cls.get_site(cls._DOMAIN.search(url).group('domain'))
-        for _ in range(site['num_retries']):
+        for _ in range(site.num_retries):
             time.sleep(cls.wait(site))
             try:
-                return WebPageGrabber.parse_page(url, site['time_out'], site['language'])
-            except urllib.error.URLError as e:
-                sys.stderr.write('Cannot open: ' + url + ' ' + str(e) + '\n')
-                return
-            except urllib.error.HTTPError as e:
+                return WebPageGrabber.parse_page(url, site.time_out, site.language)
+            except url_error.HTTPError as e:
                 sys.stderr.write('Opening: ' + url + ' ' + str(e) + '\n')
                 if e.code >= 500:
-                    return
-                else:
-                    print('Retrying...', end=' ')
+                    return None
+            except url_error.URLError as e:
+                sys.stderr.write('Cannot open: ' + url + ' ' + str(e) + '\n')
+                return None
             except Exception as e:
                 sys.stderr.write('Parsing: ' + url + ' ' + str(e) + '\n')
-                print('Retrying...', end=' ')
+            print('Retrying...', end=' ')
         print('Exceeded retries limits.')
+
+    __slots__ = ('key_words', 'results_num', '_cur_page_num', '_cur_page')
 
     # you may need to modify some of the values
     def __init__(self):
         # this member stores the current key word
         self.key_words = ''
+        self.results_num = 0
         # this member stores current page index
         self._cur_page_num = 0
         # this member stores 'BeautifulSoup' object of current page
@@ -110,6 +145,7 @@ class SearchEngine:
     def reset(self):
         self.key_words = ''
         self._cur_page_num = 0
+        self.results_num = 0
         self._cur_page = None
 
     # you need to override this function to return the correct url
@@ -119,27 +155,18 @@ class SearchEngine:
     # this function carries out grabbing action
     def mod_current_page(self, page=0):
         self._cur_page = self.html_parse(self.generate_url(page))
-        if self._cur_page is None:
-            return False
-        if page == 0:
-            if not self.first_test():
-                return False
-        else:
-            if not self.test():
-                return False
         self._cur_page_num = page
-        return True
+        return self._cur_page is not None
 
     # set a new key word
     def search(self, key_words):
         self.reset()
         self.key_words = key_words
-        return self.mod_current_page()
+        self.results_num = self.get_results_num() if self.mod_current_page() else 0
+        return self.results_num
 
-    # first test
-    # you may need to override it
-    def first_test(self):
-        return self.test()
+    def get_results_num(self):
+        raise NotImplementedError
 
     # test whether there is result
     # you need to override it
@@ -153,18 +180,19 @@ class SearchEngine:
 
     # return an iterator of results
     def results(self):
-        # try:
-        while True:
-            for result in self.results_in_page():
-                yield result
-            if not self.mod_current_page(self._cur_page_num + 1):
-                break
-        # except Exception as e:
-        #     raise ExtractError(e)
+        try:
+            if self.results_num > 0:
+                for result in self.results_in_page():
+                    yield result
+            while self.test() and self.mod_current_page(self._cur_page_num + 1):
+                for result in self.results_in_page():
+                    yield result
+        except Exception as e:
+            raise ExtractError(e, self._cur_page)
 
     @staticmethod
     def url_parse(string):
-        return urllib.parse.quote(string)
+        return url_parse.quote(string)
 
     @staticmethod
     def unwrap(fn):

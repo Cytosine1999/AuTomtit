@@ -1,9 +1,10 @@
 # import Settings
 from .SearchEngine import ExtractError
-from .SearchEngine.ThePirateBay import ThePirateBay
-from .SearchEngine.EZTV import EZTV
-from .SearchEngine.ZiMuKu import ZiMuKu
 from .SearchEngine.IMDb import IMDb
+from .SearchEngine.EZTV import EZTV
+from .SearchEngine.ThePirateBay import ThePirateBay
+from .SearchEngine.ZiMuKu import ZiMuKu
+
 
 RED = '\033[31m'
 BLUE = '\033[4;;34m'
