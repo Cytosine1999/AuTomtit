@@ -31,7 +31,7 @@ class IMDbResult(SearchResult):
             self.wpg.download(link, path + '/' + self.name + '.jpg')
 
 
-class IMDb(SearchEngine, new_slots=('details',)):
+class IMDb(SearchEngine):
     DOMAIN_BASE = 'https://www.imdb.com'
     BRACKET = re.compile('\((.*?)\)', re.DOTALL)
     IMDB_ID = re.compile('(nm|tt)\d+')
@@ -41,19 +41,19 @@ class IMDb(SearchEngine, new_slots=('details',)):
         SearchEngine.__init__(self)
         self.details = False
 
-    def generate_url(self, page=0):
+    def _generate_url(self, page=0):
         head = 'https://www.imdb.com/find?ref_=nv_sr_fn&q='
         tail = '&s=tt'
         return head + self.url_parse(self.key_words) + tail
 
-    def get_results_num(self):
+    def _get_results_num(self):
         string = next(self._cur_page.select('h1.findHeader')[0].stripped_strings).split()
         return 0 if string[0] == 'No' else int(string[1])
 
-    def test(self):
+    def _test(self):
         return False
 
-    def results_in_page(self):
+    def _results_in_page(self):
         for each in self.extract_search_page(self._cur_page):
             item = IMDbResult(**self.extract_search_item(each))
             if self.details:
@@ -98,7 +98,7 @@ class IMDb(SearchEngine, new_slots=('details',)):
         if head == 'tt':
             if 'season' in kwargs:
                 url = 'https://www.imdb.com/title/' + IMDb_id + '/episodes?season=' + str(kwargs['season'])
-                season_list = cls.extract_season_page(cls.html_parse(url))
+                season_list = cls.extract_season_page(cls._html_parse(url))
                 if 'episode' in kwargs:
                     return cls.unwrap(lambda: cls.extract_season_item(season_list[kwargs['episode']]))
                 else:
@@ -118,7 +118,7 @@ class IMDb(SearchEngine, new_slots=('details',)):
                     informed = kwargs['informed']
                 else:
                     informed = False
-                return cls.extract_title_page(cls.html_parse(url), informed)
+                return cls.extract_title_page(cls._html_parse(url), informed)
         elif head == 'nm':
             return 'https://www.imdb.com/name/' + IMDb_id + '/'
 

@@ -1,51 +1,75 @@
-import re
-
-from ... import Settings
+import copy
 
 
-class SearchResult:
-    @classmethod
-    def load(cls):
-        name = cls.__name__
-        name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-        name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()
-        name += '_settings'
-        cls.settings_name = name.replace('_', ' ')
-        cls.member_name = name.upper()
-        setattr(cls, cls.member_name, Settings.load()[cls.settings_name])
-        if 'MATCHER' not in cls.__dict__:
-            cls.MATCHER = {}
-        cls.set()
-
-    @classmethod
-    def set(cls):
-        pass
-
-    @classmethod
-    def dump(cls):
-        profile = Settings.load()
-        profile[cls.profile_name] = cls.__dict__[cls.member_name]
-        Settings.dump(profile)
-
-    __slots__ = ('name',)
-
-    def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            if value is not None:
-                self.__setattr__(key, value)
+class ConstructionException(Exception):
+    def __init__(self, msg):
+        self.msg = msg
 
     def __str__(self):
-        string = self.__class__.__name__ + ':\n'
-        for key, value in self.__dict__.items():
-            string += str(key) + ': ' + str(value) + '\n'
-        return string
+        return 'ConstructionException: ' + self.msg
 
-    def __getattr__(self, item):
-        return None
+
+class SearchResultItem:
+    @classmethod
+    def pick_instances(cls, dictionary):
+        pick = set(key for key, value in dictionary.items() if isinstance(value, cls))
+        for each in pick:
+            dictionary.pop(each)
+        return pick
+
+    def __set__(self, instance, value):
+        pass
+
+    def __get__(self, instance, owner):
+        pass
+
+
+# TODO bases
+class SearchResultMeta(type):
+    def __new__(mcs, name, bases, attrs, extends=()):
+        if not name == 'SearchResult':
+            if not (len(bases) == 1 and bases[0] == SearchResult):
+                raise ConstructionException('You cannot extends class SearchResult while extending other classes.')
+        slots = SearchResultItem.pick_instances(attrs)
+        if not name == 'SearchResult':
+            for each in extends:
+                slots |= each.__slots__
+        attrs['__slots__'] = slots
+        return super(SearchResultMeta, mcs).__new__(mcs, name, bases, attrs)
+
+
+class InitialException(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return 'ConstructionException: ' + self.msg
+
+
+class SearchResult(metaclass=SearchResultMeta):
+    # def __init_subclass__(cls, **kwargs):
+    #     print(cls.__slots__)
+
+    def __init__(self, **kwargs):
+        for filed in self.__slots__:
+            try:
+                self.__setattr__(filed, kwargs[filed])
+            except KeyError:
+                self.__setattr__(filed, None)
+
+    def to_dict(self):
+        return {key: value for key, value in self.items()}
 
     def update(self, **kwargs):
         for key, value in kwargs.items():
             self.__setattr__(key, value)
 
-    def rate(self):
-        return 0
+    def items(self):
+        for filed in self.__slots__:
+            yield filed, self.__getattribute__(filed)
+
+    def clone(self):
+        return copy.deepcopy(self)
+
+    def __repr__(self):
+        return str(self.to_dict())

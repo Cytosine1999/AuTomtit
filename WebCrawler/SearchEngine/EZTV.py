@@ -1,12 +1,11 @@
 # coding:utf-8
 from . import SearchEngine
+from ..SearchResult import SearchResult
 from ..SearchResult.MagnetResult import MagnetResult
 from ..SearchResult.VideoResult import VideoResult
 
 
-class EZTVResult(MagnetResult, VideoResult):
-    __slots__ = ('name', 'link', 'size', 'time', 'num_seeder')
-
+class EZTVResult(SearchResult, extends=(MagnetResult, VideoResult)):
     def __str__(self):
         string = '# ' + self.name + '\n\n'
         string += self.link + '\n\n'
@@ -17,17 +16,17 @@ class EZTVResult(MagnetResult, VideoResult):
 
 
 class EZTV(SearchEngine):
-    def generate_url(self, page=0):
+    def _generate_url(self, page=0):
         head = 'https://eztv.ag/search/'
         return head + self.url_parse(self.key_words)
 
-    def get_results_num(self):
+    def _get_results_num(self):
         return len(self._cur_page.select('tr.forum_header_border'))
 
-    def test(self):
+    def _test(self):
         return False
 
-    def results_in_page(self):
+    def _results_in_page(self):
         for tr_element in self._cur_page.select('tr.forum_header_border'):
             tds = tr_element.select('td.forum_thread_post')
             yield EZTVResult(

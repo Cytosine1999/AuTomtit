@@ -2,11 +2,4 @@ from . import SearchResult
 
 
 class HTTPResult(SearchResult):
-    def test(self):
-        pass
-
-    def rate(self):
-        pass
-
-
-HTTPResult.load()
+    pass

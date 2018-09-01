@@ -48,7 +48,7 @@ def run():
                 else:
                     print('No more results!')
             except ExtractError as e:
-                sys.stderr.write('Can\'t parse the web page')
+                sys.stderr.write(str(e))
                 continue
         else:
             print('No Results!')

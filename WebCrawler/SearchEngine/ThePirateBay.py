@@ -1,17 +1,18 @@
 from . import SearchEngine
+from ..SearchResult import SearchResult, SearchResultItem
 from ..SearchResult.MagnetResult import MagnetResult
 from ..SearchResult.VideoResult import VideoResult
 
 
-class ThePirateBayResult(MagnetResult, VideoResult):
-    @classmethod
-    def set(cls):
-        pass
-
-    def rate(self):
-        mr = self.PIRATE_BAY_RESULT_SETTINGS['magnet'] * MagnetResult.rate(self)
-        vr = self.PIRATE_BAY_RESULT_SETTINGS['video'] * VideoResult.rate(self)
-        return mr + vr
+class ThePirateBayResult(SearchResult, extends=(MagnetResult, VideoResult)):
+    type = SearchResultItem()
+    name = SearchResultItem()
+    link = SearchResultItem()
+    time = SearchResultItem()
+    size = SearchResultItem()
+    uploader = SearchResultItem()
+    num_seeder = SearchResultItem()
+    num_leecher = SearchResultItem()
 
     def __str__(self):
         string = '# ' + self.name + '\n'
@@ -25,25 +26,22 @@ class ThePirateBayResult(MagnetResult, VideoResult):
         return string
 
 
-ThePirateBayResult.load()
-
-
 class ThePirateBay(SearchEngine, site_settings={'default': {'num_retries': 5}}):
-    def generate_url(self, page=0):
+    def _generate_url(self, page=0):
         head = 'https://thepiratebay.cd/search/'
         tail = '/' + str(page) + '/7//'
         return head + self.url_parse(self.key_words) + tail
 
-    def get_results_num(self):
+    def _get_results_num(self):
         title = self._cur_page.h2.stripped_strings
         next(title)
         msg = next(title).split()
         return 0 if msg[0] == 'No' else int(msg[7])
 
-    def test(self):
+    def _test(self):
         return self._cur_page_num * 30 <= self.results_num
 
-    def results_in_page(self):
+    def _results_in_page(self):
         for result_msg in self._cur_page.find(id='searchResult').tbody('tr'):
             type_msg = result_msg.select('td > center > a')
             msg_iter = result_msg.select('td > font')[0].stripped_strings
